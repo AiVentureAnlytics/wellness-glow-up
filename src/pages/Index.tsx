@@ -78,7 +78,7 @@ export default function Index() {
                   Suplementos <ArrowRight size={16} className="ml-1" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="rounded-full px-6 h-12 text-base font-semibold border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button asChild className="rounded-full px-6 h-12 text-base font-semibold bg-card text-foreground hover:bg-card/90">
                 <Link to="/wearables">Wearables</Link>
               </Button>
             </div>
