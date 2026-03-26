@@ -209,14 +209,14 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA — simplified */}
+      {/* CTA */}
       <section className="brand-gradient-bg py-20">
         <div className="container text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
-            🇨🇱 Despacho a todo Chile
+            ¿Listo para tu mejor versión?
           </h2>
           <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto text-lg">
-            Compra ahora y recibe tu pedido en 24 a 72 horas. Seguimiento en tiempo real.
+            Explora nuestro catálogo y encuentra lo que necesitas para rendir al máximo.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <Button asChild className="bg-card text-foreground rounded-full px-8 h-12 text-base font-semibold hover:bg-card/90">
