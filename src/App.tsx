@@ -9,6 +9,7 @@ import Wearables from "./pages/Wearables";
 import Suplementos from "./pages/Suplementos";
 import Wellness from "./pages/Wellness";
 import Carrito from "./pages/Carrito";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/suplementos" element={<Suplementos />} />
               <Route path="/wellness" element={<Wellness />} />
               <Route path="/carrito" element={<Carrito />} />
+              <Route path="/producto/:productId" element={<ProductDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

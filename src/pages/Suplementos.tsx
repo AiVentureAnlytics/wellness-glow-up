@@ -11,6 +11,7 @@ const products = [
     priceLabel: "$34.990",
     img: proteinaImg,
     description: "30g de proteína por porción. Fórmula premium de rápida absorción.",
+    detailUrl: "/producto/prot-01",
   },
   {
     id: "crea-01",
@@ -19,6 +20,7 @@ const products = [
     priceLabel: "$19.990",
     img: creatinaImg,
     description: "5g de creatina monohidratada. Potencia tu fuerza y recuperación.",
+    detailUrl: "/producto/crea-01",
   },
 ];
 

@@ -4,7 +4,6 @@ import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logoVitrax from "@/assets/logo-vitrax.png";
 
 const links = [
   { to: "/", label: "Inicio" },
@@ -23,13 +22,13 @@ export default function Navbar() {
     <>
       {/* Top banner */}
       <div className="brand-gradient-bg text-primary-foreground text-center py-2 text-sm font-semibold tracking-wide">
-        🚚 Despacho a todo Chile
+        🚚 Despacho a todo Chile 🇨🇱
       </div>
 
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b">
         <div className="container flex items-center justify-between h-16">
-          <Link to="/">
-            <img src={logoVitrax} alt="VITRAX" className="h-10" />
+          <Link to="/" className="font-display text-2xl font-black tracking-tight">
+            VITRA<span className="text-primary">X</span>
           </Link>
 
           {/* Desktop nav */}
