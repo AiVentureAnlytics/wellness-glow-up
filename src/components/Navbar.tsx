@@ -28,8 +28,8 @@ export default function Navbar() {
 
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b">
         <div className="container flex items-center justify-between h-16">
-          <Link to="/" className="font-display text-2xl font-black tracking-tight brand-gradient-text">
-            VITRAX
+          <Link to="/">
+            <img src={logoVitrax} alt="VITRAX" className="h-10" />
           </Link>
 
           {/* Desktop nav */}
