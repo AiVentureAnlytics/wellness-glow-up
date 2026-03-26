@@ -31,8 +31,7 @@ const categories = [
 const stats = [
   { value: "10K+", label: "Clientes felices" },
   { value: "99%", label: "Satisfacción" },
-  { value: "24h", label: "Despacho express" },
-  { value: "100%", label: "Natural & premium" },
+  { value: "100%", label: "Premium" },
 ];
 
 const values = [
