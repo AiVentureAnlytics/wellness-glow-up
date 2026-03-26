@@ -2,6 +2,10 @@ import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
 import proteinaImg from "@/assets/proteina.jpg";
 import creatinaImg from "@/assets/creatina.jpg";
+import magnesioImg from "@/assets/magnesio.jpg";
+import vitaminaCImg from "@/assets/vitamina-c.jpg";
+import zmaImg from "@/assets/zma.jpg";
+import cafeinaImg from "@/assets/cafeina.jpg";
 
 const products = [
   {
@@ -21,6 +25,42 @@ const products = [
     img: creatinaImg,
     description: "5g de creatina monohidratada. Potencia tu fuerza y recuperación.",
     detailUrl: "/producto/crea-01",
+  },
+  {
+    id: "mag-01",
+    name: "Magnesio Bisglicinato",
+    price: 14990,
+    priceLabel: "$14.990",
+    img: magnesioImg,
+    description: "Magnesio de alta absorción para relajación muscular y mejor sueño.",
+    detailUrl: "/producto/mag-01",
+  },
+  {
+    id: "vitc-01",
+    name: "Vitamina C 1000mg",
+    price: 9990,
+    priceLabel: "$9.990",
+    img: vitaminaCImg,
+    description: "Refuerza tu sistema inmune con vitamina C de liberación prolongada.",
+    detailUrl: "/producto/vitc-01",
+  },
+  {
+    id: "zma-01",
+    name: "ZMA Recovery",
+    price: 16990,
+    priceLabel: "$16.990",
+    img: zmaImg,
+    description: "Zinc, Magnesio y B6 para optimizar tu recuperación nocturna.",
+    detailUrl: "/producto/zma-01",
+  },
+  {
+    id: "caf-01",
+    name: "Cafeína 200mg",
+    price: 8990,
+    priceLabel: "$8.990",
+    img: cafeinaImg,
+    description: "Energía pura y enfoque mental. Ideal como pre-entreno.",
+    detailUrl: "/producto/caf-01",
   },
 ];
 

@@ -1,6 +1,9 @@
 import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
 import nightGlassesImg from "@/assets/night-glasses.jpg";
+import desodoranteImg from "@/assets/desodorante.jpg";
+import pastaDientesImg from "@/assets/pasta-dientes.jpg";
+import antifazImg from "@/assets/antifaz.jpg";
 
 const products = [
   {
@@ -11,6 +14,33 @@ const products = [
     img: nightGlassesImg,
     description: "Mejora tu melatonina y duerme profundamente.",
     detailUrl: "/producto/well-01",
+  },
+  {
+    id: "well-02",
+    name: "Desodorante Natural",
+    price: 7990,
+    priceLabel: "$7.990",
+    img: desodoranteImg,
+    description: "Sin aluminio ni químicos. Protección natural todo el día.",
+    detailUrl: "/producto/well-02",
+  },
+  {
+    id: "well-03",
+    name: "Pasta de Dientes Natural",
+    price: 5990,
+    priceLabel: "$5.990",
+    img: pastaDientesImg,
+    description: "Ingredientes orgánicos, sin flúor. Cuidado bucal consciente.",
+    detailUrl: "/producto/well-03",
+  },
+  {
+    id: "well-04",
+    name: "Antifaz para Dormir",
+    price: 12990,
+    priceLabel: "$12.990",
+    img: antifazImg,
+    description: "Seda premium con bloqueo total de luz. Sueño reparador.",
+    detailUrl: "/producto/well-04",
   },
 ];
 
