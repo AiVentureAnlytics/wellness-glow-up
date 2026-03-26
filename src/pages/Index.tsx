@@ -31,14 +31,13 @@ const categories = [
 const stats = [
   { value: "10K+", label: "Clientes felices" },
   { value: "99%", label: "Satisfacción" },
-  { value: "24h", label: "Despacho express" },
-  { value: "100%", label: "Natural & premium" },
+  { value: "100%", label: "Premium" },
 ];
 
 const values = [
   { icon: Zap, title: "Rendimiento", desc: "Productos respaldados por ciencia para maximizar tus resultados." },
   { icon: Shield, title: "Calidad Premium", desc: "Ingredientes de grado farmacéutico, sin rellenos ni aditivos." },
-  { icon: Truck, title: "Despacho Rápido", desc: "Envío a todo Chile en 24-72 horas. Seguimiento en tiempo real." },
+  { icon: Truck, title: "Despacho Rápido", desc: "Envío rápido con seguimiento en tiempo real." },
 ];
 
 const fadeUp = {
@@ -79,7 +78,7 @@ export default function Index() {
                   Suplementos <ArrowRight size={16} className="ml-1" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="rounded-full px-6 h-12 text-base font-semibold border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button asChild className="rounded-full px-6 h-12 text-base font-semibold bg-card text-foreground hover:bg-card/90">
                 <Link to="/wearables">Wearables</Link>
               </Button>
             </div>
@@ -90,7 +89,7 @@ export default function Index() {
       {/* Stats */}
       <section className="border-b border-border/50">
         <div className="container py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 gap-6">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -210,14 +209,14 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA — simplified */}
+      {/* CTA */}
       <section className="brand-gradient-bg py-20">
         <div className="container text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
-            🇨🇱 Despacho a todo Chile
+            ¿Listo para tu mejor versión?
           </h2>
           <p className="mt-4 text-primary-foreground/80 max-w-xl mx-auto text-lg">
-            Compra ahora y recibe tu pedido en 24 a 72 horas. Seguimiento en tiempo real.
+            Explora nuestro catálogo y encuentra lo que necesitas para rendir al máximo.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <Button asChild className="bg-card text-foreground rounded-full px-8 h-12 text-base font-semibold hover:bg-card/90">
