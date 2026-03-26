@@ -4,6 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import logoVitrax from "@/assets/logo-vitrax.png";
 
 const links = [
   { to: "/", label: "Inicio" },
