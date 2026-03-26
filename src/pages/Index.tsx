@@ -37,7 +37,7 @@ const stats = [
 const values = [
   { icon: Zap, title: "Rendimiento", desc: "Productos respaldados por ciencia para maximizar tus resultados." },
   { icon: Shield, title: "Calidad Premium", desc: "Ingredientes de grado farmacéutico, sin rellenos ni aditivos." },
-  { icon: Truck, title: "Despacho Rápido", desc: "Envío a todo Chile en 24-72 horas. Seguimiento en tiempo real." },
+  { icon: Truck, title: "Despacho Rápido", desc: "Envío rápido con seguimiento en tiempo real." },
 ];
 
 const fadeUp = {
