@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Watch, Pill, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/helio-strap-action.webp";
 
 const categories = [
   {

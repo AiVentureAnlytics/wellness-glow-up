@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Minus, Plus, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import helioImg from "@/assets/helio-strap.jpg";
+import helioAction from "@/assets/helio-strap-action.webp";
+import helioBox from "@/assets/helio-strap-box.webp";
+
+const images = [helioImg, helioAction, helioBox];
 
 export default function Wearables() {
   const [qty, setQty] = useState(1);
+  const [activeImg, setActiveImg] = useState(0);
 
   const handleAdd = () => {
     addToCart("helio-01", "Amazfit Helio Strap", 140000, helioImg, qty);
@@ -21,9 +26,23 @@ export default function Wearables() {
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-card rounded-2xl p-6 card-elevated"
         >
-          <img src={helioImg} alt="Helio Strap" className="w-full rounded-xl" width={800} height={800} />
+          <div className="bg-card rounded-2xl p-6 card-elevated">
+            <img src={images[activeImg]} alt="Helio Strap" className="w-full rounded-xl aspect-square object-cover" width={800} height={800} />
+          </div>
+          <div className="flex gap-3 mt-4">
+            {images.map((img, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveImg(i)}
+                className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                  activeImg === i ? "border-primary ring-2 ring-primary/20" : "border-border opacity-60 hover:opacity-100"
+                }`}
+              >
+                <img src={img} alt="" className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
         </motion.div>
 
         <motion.div
@@ -41,21 +60,11 @@ export default function Wearables() {
           <p className="text-3xl font-bold text-primary mt-6">$140.000 CLP</p>
 
           <div className="flex items-center gap-3 mt-6">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={() => setQty(Math.max(1, qty - 1))}
-            >
+            <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(Math.max(1, qty - 1))}>
               <Minus size={16} />
             </Button>
             <span className="text-lg font-bold w-8 text-center">{qty}</span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={() => setQty(qty + 1)}
-            >
+            <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(qty + 1)}>
               <Plus size={16} />
             </Button>
           </div>
