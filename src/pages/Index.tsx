@@ -89,7 +89,7 @@ export default function Index() {
       {/* Stats */}
       <section className="border-b border-border/50">
         <div className="container py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 gap-6">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
