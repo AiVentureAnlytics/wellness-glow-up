@@ -10,6 +10,7 @@ const products = [
     priceLabel: "$25.000",
     img: nightGlassesImg,
     description: "Mejora tu melatonina y duerme profundamente.",
+    detailUrl: "/producto/well-01",
   },
 ];
 
