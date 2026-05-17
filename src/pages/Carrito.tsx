@@ -38,7 +38,7 @@ export default function Carrito() {
             <img
               src={item.img}
               alt={item.name}
-              className="w-20 h-20 rounded-lg object-cover"
+              className="w-20 h-20 shrink-0 rounded-lg object-cover overflow-hidden"
               loading="lazy"
               width={80}
               height={80}
