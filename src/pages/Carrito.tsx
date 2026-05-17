@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag, CreditCard, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 
 export default function Carrito() {
   const cart = useCart();
@@ -88,11 +87,13 @@ export default function Carrito() {
           <span className="font-display text-2xl font-bold text-primary">{formatCLP(total)}</span>
         </div>
         <Button
-          onClick={() => toast.info("Próximamente: integración de pagos")}
+          asChild
           className="w-full brand-gradient-bg text-primary-foreground rounded-full h-14 text-lg font-semibold gap-2"
         >
-          <CreditCard size={20} />
-          Pagar ahora
+          <Link to="/checkout">
+            <CreditCard size={20} />
+            Pagar ahora
+          </Link>
         </Button>
         <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">
           <Lock size={12} /> Pago seguro · Despacho a todo Chile 🇨🇱

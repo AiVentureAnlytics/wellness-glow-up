@@ -70,7 +70,7 @@ export default function Index() {
               <span className="brand-gradient-text">triunfar</span>
             </h1>
             <p className="mt-5 text-lg text-primary-foreground/80 max-w-md">
-              Vitrax combina tecnología, nutrición y bienestar para que llegues más lejos cada día.
+              CJ Health Supply combina tecnología, nutrición y bienestar para que llegues más lejos cada día.
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
               <Button asChild className="brand-gradient-bg text-primary-foreground rounded-full px-6 h-12 text-base font-semibold">
@@ -125,7 +125,7 @@ export default function Index() {
               Creemos en tu <span className="brand-gradient-text">potencial</span>
             </h2>
             <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
-              En Vitrax somos un equipo apasionado por la ciencia, la innovación y la nutrición inteligente.
+              En CJ Health Supply somos un equipo apasionado por la ciencia, la innovación y la nutrición inteligente.
               Seleccionamos cada producto con un solo criterio: que realmente funcione.
             </p>
             <p className="mt-3 text-muted-foreground leading-relaxed">

@@ -6,7 +6,18 @@ export interface CartItem {
   qty: number;
 }
 
-const STORAGE_KEY = "vitrax_cart";
+const STORAGE_KEY = "cjhealth_cart";
+
+// Migración suave del key anterior (masvita_cart) si existe
+try {
+  const legacy = localStorage.getItem("masvita_cart");
+  if (legacy && !localStorage.getItem(STORAGE_KEY)) {
+    localStorage.setItem(STORAGE_KEY, legacy);
+    localStorage.removeItem("masvita_cart");
+  }
+} catch {
+  /* ignore */
+}
 
 export function getCart(): CartItem[] {
   try {
@@ -53,6 +64,11 @@ export function getCartTotal(cart: CartItem[]) {
 
 export function getCartCount(cart: CartItem[]) {
   return cart.reduce((acc, item) => acc + item.qty, 0);
+}
+
+export function clearCart() {
+  localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event("cart-updated"));
 }
 
 export function formatCLP(num: number) {

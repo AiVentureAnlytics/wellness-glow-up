@@ -1,91 +1,98 @@
+import { useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
-import proteinaImg from "@/assets/proteina.jpg";
-import creatinaImg from "@/assets/creatina.jpg";
-import magnesioImg from "@/assets/magnesio.jpg";
-import vitaminaCImg from "@/assets/vitamina-c.jpg";
-import zmaImg from "@/assets/zma.jpg";
-import cafeinaImg from "@/assets/cafeina.jpg";
+import { useProductsBySection } from "@/hooks/useProducts";
+import type { Category } from "@/lib/products";
+import { Loader2 } from "lucide-react";
 
-const products = [
-  {
-    id: "prot-01",
-    name: "Proteína Whey Isolada",
-    price: 34990,
-    priceLabel: "$34.990",
-    img: proteinaImg,
-    description: "30g de proteína por porción. Fórmula premium de rápida absorción.",
-    detailUrl: "/producto/prot-01",
-  },
-  {
-    id: "crea-01",
-    name: "Creatina Micronizada",
-    price: 19990,
-    priceLabel: "$19.990",
-    img: creatinaImg,
-    description: "5g de creatina monohidratada. Potencia tu fuerza y recuperación.",
-    detailUrl: "/producto/crea-01",
-  },
-  {
-    id: "mag-01",
-    name: "Magnesio Bisglicinato",
-    price: 14990,
-    priceLabel: "$14.990",
-    img: magnesioImg,
-    description: "Magnesio de alta absorción para relajación muscular y mejor sueño.",
-    detailUrl: "/producto/mag-01",
-  },
-  {
-    id: "vitc-01",
-    name: "Vitamina C 1000mg",
-    price: 9990,
-    priceLabel: "$9.990",
-    img: vitaminaCImg,
-    description: "Refuerza tu sistema inmune con vitamina C de liberación prolongada.",
-    detailUrl: "/producto/vitc-01",
-  },
-  {
-    id: "zma-01",
-    name: "ZMA Recovery",
-    price: 16990,
-    priceLabel: "$16.990",
-    img: zmaImg,
-    description: "Zinc, Magnesio y B6 para optimizar tu recuperación nocturna.",
-    detailUrl: "/producto/zma-01",
-  },
-  {
-    id: "caf-01",
-    name: "Cafeína 200mg",
-    price: 8990,
-    priceLabel: "$8.990",
-    img: cafeinaImg,
-    description: "Energía pura y enfoque mental. Ideal como pre-entreno.",
-    detailUrl: "/producto/caf-01",
-  },
+type Filter = "todos" | Category;
+
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "todos", label: "Todos" },
+  { id: "proteinas", label: "Proteínas" },
+  { id: "creatinas", label: "Creatinas" },
+  { id: "vitaminas", label: "Vitaminas & Minerales" },
+  { id: "energia", label: "Energía" },
 ];
 
 export default function Suplementos() {
+  const [filter, setFilter] = useState<Filter>("todos");
+  const { data: products, isLoading, error } = useProductsBySection("Suplementos");
+
+  const filtered = filter === "todos" ? products : products.filter((p) => p.category === filter);
+
   return (
     <div className="container py-12">
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="font-display text-3xl md:text-4xl font-bold mb-8"
-      >
-        Suplementos
-      </motion.h1>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((p, i) => (
-          <motion.div
-            key={p.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
+          Catálogo
+        </span>
+        <h1 className="font-display text-3xl md:text-4xl font-bold mt-3">
+          Suplementos premium
+        </h1>
+        <p className="text-muted-foreground mt-2 max-w-xl">
+          Importación directa de Dymatize y OstroVit. Stock en Chile, despacho 24-72h.
+        </p>
+      </motion.div>
+
+      <div className="flex flex-wrap gap-2 mt-6 mb-8">
+        {FILTERS.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => setFilter(c.id)}
+            className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+              filter === c.id
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/70"
+            }`}
           >
-            <ProductCard {...p} />
-          </motion.div>
+            {c.label}
+          </button>
         ))}
       </div>
+
+      {isLoading && (
+        <div className="flex justify-center py-20">
+          <Loader2 size={32} className="animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {error && (
+        <p className="text-center text-destructive py-12">
+          Error cargando productos. Recarga la página.
+        </p>
+      )}
+
+      {!isLoading && !error && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map((p, i) => (
+            <motion.div
+              key={p.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <ProductCard
+                id={p.id}
+                name={p.name}
+                price={p.price}
+                priceLabel={p.priceLabel}
+                img={p.img}
+                description={p.description}
+                detailUrl={`/producto/${p.id}`}
+                stock={p.stock}
+                badge={p.badge}
+              />
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !error && filtered.length === 0 && (
+        <p className="text-center text-muted-foreground py-12">
+          No hay productos en esta categoría aún.
+        </p>
+      )}
     </div>
   );
 }
