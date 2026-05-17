@@ -65,10 +65,6 @@ export function isMPConfigured(): boolean {
   return Boolean(MP_PUBLIC_KEY);
 }
 
-export function getMPPublicKey(): string | undefined {
-  return MP_PUBLIC_KEY;
-}
-
 /** Returns true when using TEST credentials — use sandbox_init_point in that case */
 export function isMPTestMode(): boolean {
   return MP_PUBLIC_KEY?.startsWith("TEST-") ?? false;

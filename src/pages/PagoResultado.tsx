@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
@@ -43,8 +43,6 @@ export default function PagoResultado({ status }: { status: Status }) {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const orderId = params.get("order") ?? sessionStorage.getItem("pending_order_id");
-  const [updated, setUpdated] = useState(false);
-
   useEffect(() => {
     async function updateStatus() {
       if (!orderId) return;
@@ -58,8 +56,6 @@ export default function PagoResultado({ status }: { status: Status }) {
         clearCart();
         sessionStorage.removeItem("pending_order_id");
       }
-
-      setUpdated(true);
     }
     updateStatus();
   }, [orderId, status]);

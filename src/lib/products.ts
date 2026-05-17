@@ -42,6 +42,3 @@ export function formatCLP(num: number): string {
   }).format(num);
 }
 
-export function isInStock(product: Product): boolean {
-  return product.stock > 0;
-}

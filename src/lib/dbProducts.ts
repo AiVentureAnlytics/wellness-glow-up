@@ -108,12 +108,6 @@ export async function updateDbProduct(id: string, patch: Partial<ProductInput>):
   return data as DbProduct;
 }
 
-export async function deleteDbProduct(id: string): Promise<void> {
-  // Soft-delete: marcamos active=false en vez de borrar
-  const { error } = await supabase.from("products").update({ active: false }).eq("id", id);
-  if (error) throw new Error(error.message);
-}
-
 export async function hardDeleteDbProduct(id: string): Promise<void> {
   const { error } = await supabase.from("products").delete().eq("id", id);
   if (error) throw new Error(error.message);
@@ -136,11 +130,6 @@ export async function uploadProductImage(file: File): Promise<string> {
 
   const { data } = supabase.storage.from("product-images").getPublicUrl(filename);
   return data.publicUrl;
-}
-
-/** Sube múltiples imágenes en paralelo, devuelve sus URLs en el mismo orden */
-export async function uploadProductImages(files: File[]): Promise<string[]> {
-  return Promise.all(files.map(uploadProductImage));
 }
 
 /** Genera un slug ID a partir del nombre */
