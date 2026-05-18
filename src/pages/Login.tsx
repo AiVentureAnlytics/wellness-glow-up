@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import logoSrc from "@/assets/cj-logo-stacked.png";
+import logoSrc from "@/assets/levelup-lockup.svg";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export default function Login() {
     <div className="container py-12 max-w-md">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="text-center mb-8">
-          <img src={logoSrc} alt="CJ Health Supply" className="h-16 mx-auto mb-4" />
+          <img src={logoSrc} alt="Level Up" className="h-10 mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold">Iniciar sesión</h1>
           <p className="text-muted-foreground text-sm mt-1">Bienvenido de vuelta</p>
         </div>

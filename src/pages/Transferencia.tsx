@@ -13,7 +13,7 @@ const BANK_INFO = {
   "Tipo de cuenta": "Cuenta Corriente",
   "Número de cuenta": "0123456789",
   RUT: "76.123.456-7",
-  Titular: "AVA SpA (CJ Health Supply)",
+  Titular: "AVA SpA (Level Up)",
   Email: "cjhealthsupply@gmail.com",
 };
 

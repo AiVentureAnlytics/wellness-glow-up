@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import logoSrc from "@/assets/cj-logo-large.png";
-import { Mail, Phone, Instagram } from "lucide-react";
+import logoMark from "@/assets/levelup-mark.svg";
+import { Mail, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="mb-4">
-              <img src={logoSrc} alt="CJ Health Supply" className="h-16" />
+              <img src={logoMark} alt="Level Up" className="h-12" />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Distribución oficial de suplementos, wearables y wellness en Chile. Importadores directos.
@@ -38,17 +38,17 @@ export default function Footer() {
               <a href="mailto:cjhealthsupply@gmail.com" className="flex items-center gap-2 hover:text-foreground">
                 <Mail size={14} /> cjhealthsupply@gmail.com
               </a>
-              <a href="https://wa.me/56912345678" className="flex items-center gap-2 hover:text-foreground">
-                <Phone size={14} /> +56 9 1234 5678
+              <a href="https://wa.me/56945530873" className="flex items-center gap-2 hover:text-foreground">
+                <Phone size={14} /> +56 9 4553 0873
               </a>
-              <a href="https://instagram.com/cjhealth.cl" className="flex items-center gap-2 hover:text-foreground">
-                <Instagram size={14} /> @cjhealth.cl
+              <a href="https://wa.me/56953001483" className="flex items-center gap-2 hover:text-foreground">
+                <Phone size={14} /> +56 9 5300 1483
               </a>
             </div>
           </div>
         </div>
         <div className="mt-10 pt-6 border-t flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-muted-foreground">
-          <span>© 2026 CJ Health Supply / AVA S.A. — Santiago, Chile</span>
+          <span>© 2026 Level Up / AVA S.A. — Santiago, Chile</span>
           <span>Productos sin pretensión médica. Consulta a tu profesional de salud.</span>
         </div>
       </div>

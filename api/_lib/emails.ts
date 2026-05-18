@@ -33,7 +33,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
 
   const resend = new Resend(apiKey);
   const from =
-    process.env.RESEND_FROM_EMAIL ?? "CJ Health Supply <onboarding@resend.dev>";
+    process.env.RESEND_FROM_EMAIL ?? "Level Up <onboarding@resend.dev>";
 
   const { orderId, customer, items, total, paymentMethod } = data;
   const shortId = orderId.slice(0, 8).toUpperCase();
@@ -64,7 +64,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
 
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%);padding:36px 40px;text-align:center;">
-      <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;letter-spacing:-.3px;">CJ Health Supply</h1>
+      <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;letter-spacing:-.3px;">Level Up</h1>
       <p style="margin:6px 0 0;color:rgba(255,255,255,.8);font-size:13px;">Suplementos · Wellness · Wearables · Chile 🇨🇱</p>
     </div>
 
@@ -129,7 +129,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
 
     <!-- Footer -->
     <div style="background:#f9fafb;border-top:1px solid #f0f0f0;padding:20px 40px;text-align:center;">
-      <p style="margin:0;font-size:12px;color:#9ca3af;">© 2025 CJ Health Supply · Despacho a todo Chile</p>
+      <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Level Up · Despacho a todo Chile</p>
     </div>
   </div>
 </body>

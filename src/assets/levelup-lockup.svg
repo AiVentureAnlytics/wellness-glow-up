@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 160" width="1620" height="480">
+  <g>
+    <rect x="0" y="0" width="160" height="160" rx="36" fill="#1a6bff"/>
+    <polygon transform="translate(0 0) scale(1.6)" points="92,10 80,64 66,50 24,92 10,78 52,36 38,22" fill="#ffffff"/>
+  </g>
+  <g font-family="Plus Jakarta Sans, system-ui, sans-serif" font-weight="800" font-size="128" letter-spacing="-5">
+    <text x="200" y="124" fill="#0c1a2e">levelup</text>
+    <text x="500" y="124" fill="#1a6bff">.</text>
+  </g>
+</svg>

@@ -108,7 +108,7 @@ export default function ProductosAdmin() {
         <ShieldAlert size={64} className="mx-auto text-destructive/60 mb-4" />
         <h1 className="font-display text-2xl font-bold">Acceso restringido</h1>
         <p className="text-muted-foreground mt-2">
-          Esta página es solo para el admin de CJ Health Supply.
+          Esta página es solo para el admin de Level Up.
         </p>
         <Button asChild className="mt-6 brand-gradient-bg text-primary-foreground rounded-full px-8">
           <Link to={user ? "/" : "/login"}>{user ? "Volver al inicio" : "Iniciar sesión"}</Link>

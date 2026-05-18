@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, User as UserIcon, Loader2, ArrowRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import logoSrc from "@/assets/cj-logo-stacked.png";
+import logoSrc from "@/assets/levelup-lockup.svg";
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -69,9 +69,9 @@ export default function Registro() {
     <div className="container py-12 max-w-md">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="text-center mb-8">
-          <img src={logoSrc} alt="CJ Health Supply" className="h-16 mx-auto mb-4" />
+          <img src={logoSrc} alt="Level Up" className="h-10 mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold">Crear cuenta</h1>
-          <p className="text-muted-foreground text-sm mt-1">Únete a CJ Health Supply</p>
+          <p className="text-muted-foreground text-sm mt-1">Únete a Level Up</p>
         </div>
 
         <div className="bg-card border rounded-2xl p-6 card-elevated">

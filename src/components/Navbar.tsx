@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import logoSrc from "@/assets/cj-logo-primary.png";
-import logoMark from "@/assets/cj-mark.png";
+import logoSrc from "@/assets/levelup-lockup.svg";
+import logoMark from "@/assets/levelup-mark.svg";
 import { ShoppingCart, Menu, X, User, LogOut } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";
@@ -48,8 +48,8 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b">
         <div className="container flex items-center justify-between h-20 md:h-24">
           <Link to="/" className="flex items-center">
-            <img src={logoMark} alt="CJ Health Supply" className="h-14 md:hidden" />
-            <img src={logoSrc} alt="CJ Health Supply" className="hidden md:block md:h-20" />
+            <img src={logoMark} alt="Level Up" className="h-10 md:hidden" />
+            <img src={logoSrc} alt="Level Up" className="hidden md:block h-10" />
           </Link>
 
           {/* Desktop nav */}
