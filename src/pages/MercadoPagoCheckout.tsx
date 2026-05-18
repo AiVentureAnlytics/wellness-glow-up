@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { formatCLP, CartItem } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
+import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Loader2, ExternalLink, AlertCircle, Banknote, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -34,7 +35,20 @@ export default function MercadoPagoCheckout() {
     setError("");
     setProcessing(true);
     try {
-      // 1. Crear la orden en Supabase
+      // 1. Validar stock antes de crear la orden
+      const stockErrors = await validateCartStock(cart);
+      if (stockErrors.length > 0) {
+        const detail = stockErrors
+          .map((e) =>
+            e.available === 0
+              ? `${e.productName} sin stock`
+              : `${e.productName} (disponible: ${e.available})`
+          )
+          .join(", ");
+        throw new Error(`Stock insuficiente: ${detail}`);
+      }
+
+      // 3. Crear la orden en Supabase
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
@@ -64,10 +78,10 @@ export default function MercadoPagoCheckout() {
       const { error: itemsError } = await supabase.from("order_items").insert(items);
       if (itemsError) throw new Error(itemsError.message);
 
-      // 2. Crear preferencia MercadoPago
+      // 4. Crear preferencia MercadoPago
       const pref = await createPreference({ cart, customer, orderId: order.id });
 
-      // 3. Guardar ID de orden y redirigir — el carrito se limpia en /pago/exito
+      // 5. Guardar ID de orden y redirigir — el carrito se limpia en /pago/exito
       sessionStorage.setItem("pending_order_id", order.id);
 
       // Usar sandbox en TEST, init_point real en PROD

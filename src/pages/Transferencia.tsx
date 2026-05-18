@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { clearCart, formatCLP } from "@/lib/cart";
+import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Upload, CheckCircle, Copy, Loader2, AlertCircle } from "lucide-react";
@@ -50,7 +51,22 @@ export default function Transferencia() {
     setError("");
     setUploading(true);
     try {
-      // 1. Subir comprobante
+      // 1. Validar stock
+      const stockErrors = await validateCartStock(cart);
+      if (stockErrors.length > 0) {
+        const detail = stockErrors
+          .map((e) =>
+            e.available === 0
+              ? `${e.productName} sin stock`
+              : `${e.productName} (disponible: ${e.available})`
+          )
+          .join(", ");
+        setError(`Stock insuficiente: ${detail}`);
+        setUploading(false);
+        return;
+      }
+
+      // 2. Subir comprobante
       const ext = file.name.split(".").pop();
       const filename = `${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: uploadError } = await supabase.storage
@@ -61,7 +77,7 @@ export default function Transferencia() {
 
       const { data: urlData } = supabase.storage.from("comprobantes").getPublicUrl(filename);
 
-      // 2. Crear orden en Supabase
+      // 3. Crear orden en Supabase
       const { data: order, error: orderError } = await supabase
         .from("orders")
         .insert({
@@ -90,6 +106,12 @@ export default function Transferencia() {
 
       const { error: itemsError } = await supabase.from("order_items").insert(items);
       if (itemsError) throw new Error(itemsError.message);
+
+      // 4. Decrementar stock (idempotente — seguro si se llama más de una vez)
+      const { error: rpcError } = await supabase.rpc("decrement_order_stocks", {
+        p_order_id: order.id,
+      });
+      if (rpcError) throw new Error(rpcError.message);
 
       clearCart();
       navigate(`/orden/${order.id}`, { state: { order, customer } });

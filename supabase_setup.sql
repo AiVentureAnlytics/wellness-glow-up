@@ -201,3 +201,47 @@ create policy "products_admin_delete"
 -- select * from orders limit 5;
 -- select * from order_items limit 10;
 -- select * from products limit 10;
+
+-- ============================================================
+-- MIGRACIÓN: stock tracking en órdenes
+-- Correr en SQL Editor DESPUÉS del setup inicial
+-- ============================================================
+
+-- 1. Columna para evitar double-decrement de stock
+alter table orders add column if not exists stocks_decremented boolean default false;
+
+-- 2. Función para decrementar stock de forma atómica e idempotente.
+--    SECURITY DEFINER: corre con permisos del owner (postgres), saltando RLS.
+--    Otorgamos EXECUTE a anon/authenticated para que el cliente y el webhook puedan llamarla.
+create or replace function decrement_order_stocks(p_order_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_item record;
+begin
+  -- Idempotencia: si ya se decrementó, no hacer nada
+  if exists (
+    select 1 from orders where id = p_order_id and stocks_decremented = true
+  ) then
+    return;
+  end if;
+
+  -- Decrementar stock por cada ítem de la orden
+  for v_item in
+    select product_id, qty from order_items where order_id = p_order_id
+  loop
+    update products
+      set stock = greatest(0, stock - v_item.qty)
+      where id = v_item.product_id;
+  end loop;
+
+  -- Marcar la orden como "stocks ya decrementados"
+  update orders set stocks_decremented = true where id = p_order_id;
+end;
+$$;
+
+-- Permisos de ejecución
+grant execute on function decrement_order_stocks(uuid) to anon, authenticated;
