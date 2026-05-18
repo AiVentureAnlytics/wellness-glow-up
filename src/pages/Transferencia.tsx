@@ -114,6 +114,24 @@ export default function Transferencia() {
       if (rpcError) throw new Error(rpcError.message);
 
       clearCart();
+
+      // 5. Enviar emails de confirmación (fire-and-forget — no bloquea el flujo)
+      fetch("/api/emails/send-order-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: order.id,
+          customer,
+          items: cart.map((item) => ({
+            product_name: item.name,
+            qty: item.qty,
+            price: item.price,
+          })),
+          total,
+          paymentMethod: "transferencia",
+        }),
+      }).catch((e) => console.warn("[email] send failed:", e));
+
       navigate(`/orden/${order.id}`, { state: { order, customer } });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Error desconocido";

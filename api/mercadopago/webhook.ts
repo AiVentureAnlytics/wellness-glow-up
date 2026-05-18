@@ -1,5 +1,7 @@
 export const config = { runtime: "edge" };
 
+import { sendOrderEmails } from "../_lib/emails";
+
 const MP_API_BASE = "https://api.mercadopago.com";
 
 export default async function handler(req: Request): Promise<Response> {
@@ -101,6 +103,42 @@ export default async function handler(req: Request): Promise<Response> {
   if (!rpcRes.ok) {
     const err = await rpcRes.text();
     return json({ error: `Stock decrement failed: ${err}` }, 502);
+  }
+
+  // Fetch order + items for email (non-critical — never fail the webhook on email error)
+  try {
+    const orderRes = await fetch(
+      `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=customer_name,customer_email,customer_phone,customer_address,total,payment_method,order_items(product_name,qty,price)`,
+      { headers: authHeaders }
+    );
+    if (orderRes.ok) {
+      const rows = (await orderRes.json()) as Array<{
+        customer_name: string;
+        customer_email: string;
+        customer_phone: string;
+        customer_address: string;
+        total: number;
+        payment_method: string;
+        order_items: Array<{ product_name: string; qty: number; price: number }>;
+      }>;
+      const row = rows[0];
+      if (row) {
+        await sendOrderEmails({
+          orderId,
+          customer: {
+            name: row.customer_name,
+            email: row.customer_email,
+            phone: row.customer_phone,
+            address: row.customer_address,
+          },
+          items: row.order_items,
+          total: row.total,
+          paymentMethod: row.payment_method as "mercadopago" | "transferencia",
+        });
+      }
+    }
+  } catch (err) {
+    console.error("[webhook] Email send failed (non-fatal):", err);
   }
 
   return json({ ok: true, orderId });
