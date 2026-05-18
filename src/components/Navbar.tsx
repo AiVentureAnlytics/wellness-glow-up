@@ -1,6 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import logoSrc from "@/assets/levelup-lockup.svg";
-import logoMark from "@/assets/levelup-mark.svg";
+import logoSrc from "@/assets/levelup-logo.png";
 import { ShoppingCart, Menu, X, User, LogOut } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";
@@ -48,8 +47,7 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b">
         <div className="container flex items-center justify-between h-20 md:h-24">
           <Link to="/" className="flex items-center">
-            <img src={logoMark} alt="Level Up" className="h-10 w-auto md:hidden" />
-            <img src={logoSrc} alt="Level Up" className="hidden md:block h-14 w-auto shrink-0" />
+            <img src={logoSrc} alt="Level Up" className="h-10 w-auto shrink-0 md:h-12" />
           </Link>
 
           {/* Desktop nav */}

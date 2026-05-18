@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, User as UserIcon, Loader2, ArrowRight, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import logoSrc from "@/assets/levelup-lockup.svg";
+import logoSrc from "@/assets/levelup-logo.png";
 
 export default function Registro() {
   const navigate = useNavigate();

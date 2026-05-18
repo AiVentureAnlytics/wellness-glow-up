@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoMark from "@/assets/levelup-mark.svg";
+import logoSrc from "@/assets/levelup-logo.png";
 import { Mail, Phone } from "lucide-react";
 
 export default function Footer() {
@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="mb-4">
-              <img src={logoMark} alt="Level Up" className="h-12" />
+              <img src={logoSrc} alt="Level Up" className="h-10 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Distribución oficial de suplementos, wearables y wellness en Chile. Importadores directos.

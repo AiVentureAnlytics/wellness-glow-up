@@ -3,7 +3,9 @@
     "allow": [
       "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/src/pages/**)",
       "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/**)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(find \"/Users/cae/Desktop/Pagina web CJ Health sypply/wellness-glow-up\" -name \"logo_real*\" 2>/dev/null && find \"/Users/cae/Desktop/Pagina web CJ Health sypply\" -maxdepth 2 -name \"logo_real*\" 2>/dev/null)",
+      "Read(//Users/cae/Desktop/Pagina web CJ Health sypply/**)"
     ]
   }
 }
