@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/src/pages/**)"
+      "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/src/pages/**)",
+      "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/**)"
     ]
   }
 }
