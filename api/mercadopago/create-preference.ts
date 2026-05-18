@@ -31,6 +31,8 @@ export default async function handler(req: Request): Promise<Response> {
     auto_return: "approved",
   };
 
+  console.log("[MP] preference payload:", JSON.stringify(preference, null, 2));
+
   const mpRes = await fetch(MP_PREFERENCES_URL, {
     method: "POST",
     headers: {
