@@ -34,12 +34,6 @@ export async function createPreference(args: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       items,
-      payer: {
-        name: args.customer.name,
-        email: args.customer.email,
-        phone: { number: args.customer.phone },
-        address: { street_name: args.customer.address },
-      },
       external_reference: args.orderId,
       notification_url: `${window.location.origin}/api/mercadopago/webhook`,
     }),

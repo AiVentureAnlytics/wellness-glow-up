@@ -20,9 +20,13 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: "Invalid JSON body" }, 400);
   }
 
+  // Strip payer — passing payer.email causes MP to load that account's saved cards
+  // into every checkout session, leaking payment methods across users.
+  const { payer: _payer, ...safeBody } = body;
+
   // Inject back_urls and auto_return server-side — clients must not override these
   const preference = {
-    ...body,
+    ...safeBody,
     back_urls: {
       success: `${APP_URL}/pago/exito`,
       failure: `${APP_URL}/pago/error`,
