@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoSrc from "@/assets/levelup-logo.png";
+import logoSrc from "@/assets/levelup-lockup.png";
 import { Mail, Phone } from "lucide-react";
 
 export default function Footer() {

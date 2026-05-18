@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import logoSrc from "@/assets/levelup-logo.png";
+import logoSrc from "@/assets/levelup-lockup.png";
 import { ShoppingCart, Menu, X, User, LogOut } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";

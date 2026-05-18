@@ -5,7 +5,8 @@
       "Read(//Users/cae/Desktop/Pagina\\\\ web\\\\ CJ\\\\ Health\\\\ sypply/wellness-glow-up/**)",
       "Bash(npm install *)",
       "Bash(find \"/Users/cae/Desktop/Pagina web CJ Health sypply/wellness-glow-up\" -name \"logo_real*\" 2>/dev/null && find \"/Users/cae/Desktop/Pagina web CJ Health sypply\" -maxdepth 2 -name \"logo_real*\" 2>/dev/null)",
-      "Read(//Users/cae/Desktop/Pagina web CJ Health sypply/**)"
+      "Read(//Users/cae/Desktop/Pagina web CJ Health sypply/**)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/cae/Desktop/Pagina web CJ Health sypply/wellness-glow-up/logo/levelup-lockup.png\")"
     ]
   }
 }
