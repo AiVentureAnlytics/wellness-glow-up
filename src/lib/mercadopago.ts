@@ -41,12 +41,6 @@ export async function createPreference(args: {
         address: { street_name: args.customer.address },
       },
       external_reference: args.orderId,
-      back_urls: {
-        success: `${window.location.origin}/pago/exito?order=${args.orderId}`,
-        failure: `${window.location.origin}/pago/error?order=${args.orderId}`,
-        pending: `${window.location.origin}/pago/pendiente?order=${args.orderId}`,
-      },
-      auto_return: "approved",
       notification_url: `${window.location.origin}/api/mercadopago/webhook`,
     }),
   });
