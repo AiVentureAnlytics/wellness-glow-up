@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { getCartTotal, formatCLP } from "@/lib/cart";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +13,6 @@ export default function Checkout() {
   const cart = useCart();
   const total = getCartTotal(cart);
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -22,17 +20,6 @@ export default function Checkout() {
     phone: "",
     address: "",
   });
-
-  // Prefill if user is logged in
-  useEffect(() => {
-    if (user) {
-      setForm((f) => ({
-        ...f,
-        email: f.email || user.email || "",
-        name: f.name || (user.user_metadata?.full_name as string) || "",
-      }));
-    }
-  }, [user]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   if (cart.length === 0) {

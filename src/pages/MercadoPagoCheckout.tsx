@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/hooks/useAuth";
 import { formatCLP, CartItem } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
 import { validateCartStock } from "@/lib/checkout";
@@ -19,7 +18,6 @@ interface CheckoutState {
 export default function MercadoPagoCheckout() {
   const { state } = useLocation() as { state: CheckoutState | null };
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
 
@@ -59,7 +57,7 @@ export default function MercadoPagoCheckout() {
           customer_phone: customer.phone,
           customer_address: customer.address,
           payment_method: "mercadopago",
-          user_id: user?.id ?? null,
+          user_id: null,
         })
         .select()
         .single();

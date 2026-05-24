@@ -111,7 +111,7 @@ export default function ProductosAdmin() {
           Esta página es solo para el admin de Level Up.
         </p>
         <Button asChild className="mt-6 brand-gradient-bg text-primary-foreground rounded-full px-8">
-          <Link to={user ? "/" : "/login"}>{user ? "Volver al inicio" : "Iniciar sesión"}</Link>
+          <Link to="/">Volver al inicio</Link>
         </Button>
       </div>
     );

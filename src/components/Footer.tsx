@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="border-t bg-card mt-20">
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-1">
             <div className="mb-4">
               <img src={logoSrc} alt="Level Up" className="h-10 w-auto" />
@@ -22,14 +22,6 @@ export default function Footer() {
               <Link to="/wearables" className="hover:text-foreground transition-colors">Wearables</Link>
               <Link to="/wellness" className="hover:text-foreground transition-colors">Wellness</Link>
               <Link to="/carrito" className="hover:text-foreground transition-colors">Mi carrito</Link>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-display font-semibold mb-3">Cuenta</h4>
-            <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <Link to="/login" className="hover:text-foreground transition-colors">Ingresar</Link>
-              <Link to="/registro" className="hover:text-foreground transition-colors">Crear cuenta</Link>
-              <Link to="/mis-ordenes" className="hover:text-foreground transition-colors">Mis órdenes</Link>
             </div>
           </div>
           <div>

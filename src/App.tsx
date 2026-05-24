@@ -15,10 +15,8 @@ import MercadoPagoCheckout from "./pages/MercadoPagoCheckout";
 import PagoResultado from "./pages/PagoResultado";
 import OrdenConfirmacion from "./pages/OrdenConfirmacion";
 import ProductDetail from "./pages/ProductDetail";
-import Login from "./pages/Login";
-import Registro from "./pages/Registro";
-import MisOrdenes from "./pages/MisOrdenes";
 import ProductosAdmin from "./pages/admin/ProductosAdmin";
+import { AuthProvider } from "./contexts/AuthContext";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,10 +43,7 @@ const App = () => (
               <Route path="/pago/pendiente" element={<PagoResultado status="pendiente" />} />
               <Route path="/orden/:orderId" element={<OrdenConfirmacion />} />
               <Route path="/producto/:productId" element={<ProductDetail />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/registro" element={<Registro />} />
-              <Route path="/mis-ordenes" element={<MisOrdenes />} />
-              <Route path="/admin/productos" element={<ProductosAdmin />} />
+              <Route path="/admin/productos" element={<AuthProvider><ProductosAdmin /></AuthProvider>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
