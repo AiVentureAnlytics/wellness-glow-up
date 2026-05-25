@@ -2,12 +2,18 @@ import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
 import { useProductsBySection } from "@/hooks/useProducts";
 import { Loader2 } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
 
 export default function Wellness() {
   const { data: products, isLoading, error } = useProductsBySection("Wellness");
 
   return (
     <div className="container py-12">
+      <PageMeta
+        title="Productos Wellness en Chile — Descanso y Recuperación"
+        description="Suplementos para mejorar tu descanso, recuperación y bienestar diario. Productos de calidad premium con despacho a todo Chile en 24-72h."
+        canonical="https://vitrax.cl/wellness"
+      />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
           Catálogo

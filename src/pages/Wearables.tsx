@@ -2,12 +2,18 @@ import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
 import { useProductsBySection } from "@/hooks/useProducts";
 import { Loader2 } from "lucide-react";
+import PageMeta from "@/components/PageMeta";
 
 export default function Wearables() {
   const { data: products, isLoading, error } = useProductsBySection("Wearables");
 
   return (
     <div className="container py-12">
+      <PageMeta
+        title="Wearables de Salud en Chile — Helio Strap y Más"
+        description="Tecnología wearable de última generación para seguimiento de salud, rendimiento y recuperación. Helio Strap y más. Disponible en Chile con despacho a todo el país."
+        canonical="https://vitrax.cl/wearables"
+      />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
           Catálogo

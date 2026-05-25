@@ -7,6 +7,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Minus, Plus, ArrowLeft, Truck, PackageX, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import PageMeta from "@/components/PageMeta";
+
+const BASE_URL = "https://vitrax.cl";
 
 function getDeliveryDate() {
   const d = new Date();
@@ -61,8 +64,40 @@ export default function ProductDetail() {
     product.section === "Wellness" ? "/wellness" :
     product.section === "Wearables" ? "/wearables" : "/suplementos";
 
+  const metaDescription = product.description
+    ? product.description.slice(0, 155)
+    : `${product.name} — ${product.section} premium en Chile. Despacho a todo el país.`;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? metaDescription,
+    image: product.img,
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "CLP",
+      price: product.price,
+      availability: inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: "Level Up" },
+    },
+  };
+
   return (
     <div className="container py-12">
+      <PageMeta
+        title={product.name}
+        description={metaDescription}
+        canonical={`${BASE_URL}/producto/${product.id}`}
+        ogImage={product.img}
+        ogType="product"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link to={backTo} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft size={16} /> Volver a {product.section}
       </Link>

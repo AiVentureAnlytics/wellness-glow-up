@@ -3,6 +3,7 @@ import { ArrowRight, Watch, Pill, Heart, Zap, Shield, Truck } from "lucide-react
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/helio-strap-action.webp";
+import PageMeta from "@/components/PageMeta";
 
 const categories = [
   {
@@ -52,6 +53,11 @@ const fadeUp = {
 export default function Index() {
   return (
     <div>
+      <PageMeta
+        title="Suplementos, Wearables y Wellness en Chile"
+        description="Level Up — Importadores directos de Dymatize, OstroVit y tecnología wearable en Chile. Proteínas, creatinas, vitaminas y wellness. Despacho a todo Chile en 24-72h."
+        canonical="https://vitrax.cl/"
+      />
       {/* Hero */}
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
