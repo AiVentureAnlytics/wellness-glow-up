@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { getCartTotal, formatCLP } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export default function Checkout() {
   const cart = useCart();

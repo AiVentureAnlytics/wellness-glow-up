@@ -56,6 +56,9 @@ export default function PagoResultado({ status }: { status: Status }) {
         clearCart();
         sessionStorage.removeItem("pending_order_id");
       }
+      if (status === "error") {
+        sessionStorage.removeItem("pending_order_id");
+      }
     }
     updateStatus();
   }, [orderId, status]);

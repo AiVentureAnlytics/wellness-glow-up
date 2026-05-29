@@ -178,7 +178,7 @@ export default function ProductDetail() {
                 <Minus size={16} />
               </Button>
               <span className="text-lg font-bold w-8 text-center">{qty}</span>
-              <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(qty + 1)}>
+              <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(Math.min(qty + 1, product.stock))}>
                 <Plus size={16} />
               </Button>
             </div>

@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev        # Dev server at http://localhost:8080
 npm run build      # Production build to dist/
+npm run build:dev  # Development build (keeps source maps / dev flags)
 npm run preview    # Preview production build locally
 npm run lint       # ESLint
 npm run test       # Vitest (run once)
@@ -28,13 +29,13 @@ Copy `.env.example` to `.env` and fill in:
 
 ## Architecture
 
-**Stack:** React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui + Supabase + MercadoPago + Resend
+**Stack:** React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui + framer-motion + Supabase + MercadoPago + Resend
 
-This is a Chilean e-commerce SPA for supplements, wearables, and wellness products. Deployed on Vercel.
+This is a Chilean e-commerce SPA for supplements, wearables, and wellness products. Production domain: `vitrax.cl`. Deployed on Vercel.
 
 ### Provider tree
 
-`QueryClientProvider` (TanStack Query) → `TooltipProvider` → `BrowserRouter` → `Navbar + Routes + Footer`
+`HelmetProvider` (react-helmet-async, in `src/main.tsx`) → `QueryClientProvider` (TanStack Query) → `TooltipProvider` → `BrowserRouter` → `Navbar + Routes + Footer`
 
 `AuthProvider` is **not** app-wide — it wraps only the `ProductosAdmin` route in `src/App.tsx`. The rest of the app is unauthenticated.
 
@@ -75,6 +76,7 @@ All files under `api/` run as Vercel Edge Functions (`export const config = { ru
 - `api/mercadopago/webhook.ts` — receives MP payment notifications; verifies HMAC signature when `MP_WEBHOOK_SECRET` is set; on `approved` payment: updates order status to `"verificado"`, calls `decrement_order_stocks` RPC (idempotent), then sends order emails.
 - `api/emails/send-order-confirmation.ts` — manually trigger order confirmation emails.
 - `api/_lib/emails.ts` — shared Resend email logic; sends customer confirmation + admin notification via `Promise.allSettled` (one failure never blocks the other).
+- `api/sitemap.ts` — generates dynamic XML sitemap; fetches active product IDs from Supabase and combines with static routes. Served at `/sitemap.xml` via the `vercel.json` rewrite.
 
 ### Email notifications
 
@@ -96,9 +98,13 @@ Product images → `product-images` Storage bucket (public). Payment proofs → 
 
 The `decrement_order_stocks(p_order_id uuid)` RPC is `SECURITY DEFINER` and idempotent (checks `stocks_decremented` flag before acting).
 
+### Edge Middleware
+
+`middleware.ts` (root) is Vercel Edge Middleware that runs before the SPA on `/producto/:path*`. It checks the `User-Agent` for known social media crawlers (Facebook, WhatsApp, Twitter, etc.) and, for those, fetches the product from Supabase and returns a minimal HTML page with correct `og:*` / `twitter:*` meta tags — bypassing the SPA entirely. Real users pass through untouched.
+
 ### Routing
 
-All routes are defined in `src/App.tsx`. The `vercel.json` rewrite rule sends all non-`/api/` paths to `index.html` for SPA routing.
+All routes are defined in `src/App.tsx`. The `vercel.json` rewrite rule sends all non-`/api/` paths to `index.html` for SPA routing. Client-side page-to-page navigation between checkout steps uses React Router `location.state` to pass `{ customer, cart, total }`; if state is absent (e.g. direct URL), the page redirects to `/carrito`.
 
 ### Currency
 
