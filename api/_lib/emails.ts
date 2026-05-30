@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const APP_URL = "https://wellness-glow-up.vercel.app";
+const APP_URL = "https://levelupp.cl";
 const ADMIN_EMAIL = "cjhealthsupply@gmail.com";
 
 export interface OrderEmailData {

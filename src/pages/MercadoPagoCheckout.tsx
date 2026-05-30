@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { formatCLP, CartItem } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
 import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2, ExternalLink, AlertCircle, Banknote, ShoppingBag } from "lucide-react";
+import { CreditCard, Loader2, ExternalLink, AlertCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 interface CheckoutState {
@@ -187,12 +187,6 @@ export default function MercadoPagoCheckout() {
           </Button>
         </div>
 
-        {/* Alternativa transferencia */}
-        <div className="text-center">
-          <Link to="/pago/transferencia" state={state} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-2">
-            <Banknote size={14} /> Prefiero pagar por transferencia bancaria
-          </Link>
-        </div>
       </motion.div>
     </div>
   );

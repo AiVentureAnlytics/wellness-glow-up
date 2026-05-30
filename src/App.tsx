@@ -10,7 +10,6 @@ import Suplementos from "./pages/Suplementos";
 import Wellness from "./pages/Wellness";
 import Carrito from "./pages/Carrito";
 import Checkout from "./pages/Checkout";
-import Transferencia from "./pages/Transferencia";
 import MercadoPagoCheckout from "./pages/MercadoPagoCheckout";
 import PagoResultado from "./pages/PagoResultado";
 import OrdenConfirmacion from "./pages/OrdenConfirmacion";
@@ -37,7 +36,6 @@ const App = () => (
               <Route path="/carrito" element={<Carrito />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/pago/mercadopago" element={<MercadoPagoCheckout />} />
-              <Route path="/pago/transferencia" element={<Transferencia />} />
               <Route path="/pago/exito" element={<PagoResultado status="exito" />} />
               <Route path="/pago/error" element={<PagoResultado status="error" />} />
               <Route path="/pago/pendiente" element={<PagoResultado status="pendiente" />} />

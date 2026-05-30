@@ -1,7 +1,7 @@
 export const config = { runtime: "edge" };
 
 const MP_PREFERENCES_URL = "https://api.mercadopago.com/checkout/preferences";
-const APP_URL = "https://wellness-glow-up.vercel.app";
+const APP_URL = "https://levelupp.cl";
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") {
