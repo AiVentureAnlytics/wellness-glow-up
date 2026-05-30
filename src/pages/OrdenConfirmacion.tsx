@@ -46,7 +46,7 @@ export default function OrdenConfirmacion() {
             <div>
               <p className="font-semibold">¿Qué sigue?</p>
               <p className="text-sm text-muted-foreground">
-                Verificaremos tu transferencia en un máximo de <strong>24 horas hábiles</strong>.
+                Tu pago fue procesado exitosamente. Recibirás un email de confirmación en breve.
                 {email && (
                   <> Te notificaremos a <strong>{email}</strong> cuando tu pedido sea confirmado y despachado.</>
                 )}
