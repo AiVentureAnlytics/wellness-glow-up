@@ -58,6 +58,7 @@ drop policy if exists "order_items_insert_anyone" on order_items;
 drop policy if exists "orders_select_own" on orders;
 drop policy if exists "order_items_select_own" on order_items;
 drop policy if exists "orders_update_status" on orders;
+drop policy if exists "orders_cancel_own" on orders;
 
 -- Cualquiera puede crear una orden (guest checkout)
 create policy "orders_insert_anyone"
@@ -68,14 +69,12 @@ create policy "order_items_insert_anyone"
   on order_items for insert
   with check (true);
 
--- Usuarios autenticados ven sus órdenes (por user_id o email)
--- Anónimos también pueden ver (filtra por orderId desde el cliente)
+-- Solo el usuario dueño puede ver sus órdenes (por user_id o email del JWT)
 create policy "orders_select_own"
   on orders for select
   using (
     user_id = auth.uid()
     or customer_email = (auth.jwt() ->> 'email')
-    or auth.role() = 'anon'
   );
 
 create policy "order_items_select_own"
@@ -85,15 +84,14 @@ create policy "order_items_select_own"
       select id from orders
       where user_id = auth.uid()
          or customer_email = (auth.jwt() ->> 'email')
-         or auth.role() = 'anon'
     )
   );
 
--- Actualizar estado de orden (para callbacks de MP)
-create policy "orders_update_status"
+-- Solo el dueño puede cancelar su propia orden; el webhook usa service_role (bypasea RLS)
+create policy "orders_cancel_own"
   on orders for update
-  using (true)
-  with check (true);
+  using (user_id = auth.uid() or customer_email = (auth.jwt() ->> 'email'))
+  with check (status = 'cancelado');
 
 -- ============================================================
 -- STORAGE: bucket para comprobantes de transferencia
@@ -212,7 +210,7 @@ alter table orders add column if not exists stocks_decremented boolean default f
 
 -- 2. Función para decrementar stock de forma atómica e idempotente.
 --    SECURITY DEFINER: corre con permisos del owner (postgres), saltando RLS.
---    Otorgamos EXECUTE a anon/authenticated para que el cliente y el webhook puedan llamarla.
+--    Solo el service_role (webhook vía SUPABASE_SERVICE_ROLE_KEY) puede llamarla.
 create or replace function decrement_order_stocks(p_order_id uuid)
 returns void
 language plpgsql
@@ -222,6 +220,13 @@ as $$
 declare
   v_item record;
 begin
+  -- Guard: solo decrementar si la orden está verificada (pago confirmado)
+  if not exists (
+    select 1 from orders where id = p_order_id and status = 'verificado'
+  ) then
+    raise exception 'Order % is not verified — stock decrement rejected', p_order_id;
+  end if;
+
   -- Idempotencia: si ya se decrementó, no hacer nada
   if exists (
     select 1 from orders where id = p_order_id and stocks_decremented = true
@@ -243,5 +248,6 @@ begin
 end;
 $$;
 
--- Permisos de ejecución
-grant execute on function decrement_order_stocks(uuid) to anon, authenticated;
+-- Revocar acceso anónimo y autenticado — solo service_role (webhook) puede ejecutar
+revoke execute on function decrement_order_stocks(uuid) from anon;
+revoke execute on function decrement_order_stocks(uuid) from authenticated;

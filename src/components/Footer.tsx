@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import logoSrc from "@/assets/levelup-lockup.png";
-import { Mail, MessageCircle, Instagram, Shield, Truck, RotateCcw, CreditCard } from "lucide-react";
+import { Mail, MessageCircle, Instagram, Shield, Truck, CreditCard } from "lucide-react";
 
 const trustItems = [
   { icon: Truck, label: "Envío a todo Chile" },
   { icon: Shield, label: "Pago 100% seguro" },
-  { icon: RotateCcw, label: "Cambios y devoluciones" },
   { icon: CreditCard, label: "Cuotas sin interés" },
 ];
 

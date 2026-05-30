@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   ShoppingCart, Minus, Plus, ArrowLeft, Truck,
-  PackageX, Loader2, Shield, RefreshCw, CheckCircle2,
+  PackageX, Loader2, Shield, CheckCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PageMeta from "@/components/PageMeta";
@@ -262,10 +262,6 @@ export default function ProductDetail() {
             <span className="flex items-center gap-1.5">
               <Truck size={13} className="text-primary" />
               Envío a todo Chile
-            </span>
-            <span className="flex items-center gap-1.5">
-              <RefreshCw size={13} className="text-primary" />
-              Cambios y devoluciones
             </span>
           </div>
         </motion.div>

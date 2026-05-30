@@ -1,5 +1,5 @@
 import { useCart } from "@/hooks/useCart";
-import { removeFromCart, changeQuantity, getCartTotal, formatCLP } from "@/lib/cart";
+import { removeFromCart, changeQuantity, getCartTotal, formatCLP, getShippingCost, getOrderTotal, SHIPPING_THRESHOLD } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag, CreditCard, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Carrito() {
   const cart = useCart();
-  const total = getCartTotal(cart);
+  const subtotal = getCartTotal(cart);
+  const shippingCost = getShippingCost(subtotal);
+  const orderTotal = getOrderTotal(subtotal);
 
   if (cart.length === 0) {
     return (
@@ -82,9 +84,29 @@ export default function Carrito() {
       </AnimatePresence>
 
       <div className="mt-8 bg-card rounded-xl p-6 card-elevated space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-muted-foreground">Subtotal</span>
+          <span>{formatCLP(subtotal)}</span>
+        </div>
+        {shippingCost === 0 ? (
+          <div className="flex justify-between items-center text-sm text-green-600 font-semibold">
+            <span>Envío</span>
+            <span>Envío gratis 🎉</span>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Envío</span>
+              <span>{formatCLP(shippingCost)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground text-right">
+              Te faltan {formatCLP(SHIPPING_THRESHOLD - subtotal)} para envío gratis
+            </p>
+          </div>
+        )}
+        <div className="border-t pt-2 flex justify-between items-center">
           <span className="font-display text-xl font-bold">Total</span>
-          <span className="font-display text-2xl font-bold text-primary">{formatCLP(total)}</span>
+          <span className="font-display text-2xl font-bold text-primary">{formatCLP(orderTotal)}</span>
         </div>
         <Button
           asChild

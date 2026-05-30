@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import { formatCLP, CartItem } from "@/lib/cart";
+import { formatCLP, CartItem, getCartTotal, getShippingCost } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
 import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ export default function MercadoPagoCheckout() {
   if (!state) return null;
 
   const { customer, cart, total } = state;
+  const shippingCost = getShippingCost(getCartTotal(cart));
 
   async function handlePay() {
     setError("");
@@ -77,7 +78,7 @@ export default function MercadoPagoCheckout() {
       if (itemsError) throw new Error(itemsError.message);
 
       // 4. Crear preferencia MercadoPago
-      const pref = await createPreference({ cart, customer, orderId: order.id });
+      const pref = await createPreference({ cart, customer, orderId: order.id, shippingCost });
 
       // 5. Guardar ID de orden y redirigir — el carrito se limpia en /pago/exito
       sessionStorage.setItem("pending_order_id", order.id);
@@ -129,7 +130,23 @@ export default function MercadoPagoCheckout() {
                 <span className="font-semibold">{formatCLP(item.price * item.qty)}</span>
               </div>
             ))}
+            <div className="border-t pt-2">
+              {shippingCost === 0 ? (
+                <div className="flex justify-between text-green-600 font-semibold">
+                  <span>Envío</span>
+                  <span>Envío gratis 🎉</span>
+                </div>
+              ) : (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Envío</span>
+                  <span className="font-semibold">{formatCLP(shippingCost)}</span>
+                </div>
+              )}
+            </div>
           </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            🕐 Tiempo de entrega: máximo 2 semanas
+          </p>
         </div>
 
         {/* MP card */}

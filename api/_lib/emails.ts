@@ -11,6 +11,15 @@ export interface OrderEmailData {
   paymentMethod: "mercadopago" | "transferencia";
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function clp(amount: number): string {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
@@ -41,11 +50,16 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
   const paymentLabel =
     paymentMethod === "mercadopago" ? "MercadoPago" : "Transferencia bancaria";
 
+  const safeName = escapeHtml(customer.name);
+  const safeEmail = escapeHtml(customer.email);
+  const safePhone = escapeHtml(customer.phone);
+  const safeAddress = escapeHtml(customer.address);
+
   const itemRows = items
     .map(
       (item) => `
         <tr>
-          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;">${item.product_name}</td>
+          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;">${escapeHtml(item.product_name)}</td>
           <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;text-align:center;">${item.qty}</td>
           <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;text-align:right;font-weight:600;">${clp(item.price * item.qty)}</td>
         </tr>`
@@ -71,7 +85,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
     <!-- Body -->
     <div style="padding:40px;">
       <h2 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111;">¡Tu pedido está confirmado!</h2>
-      <p style="margin:0 0 28px;font-size:15px;color:#555;">Hola <strong>${customer.name}</strong>, recibimos tu orden correctamente.</p>
+      <p style="margin:0 0 28px;font-size:15px;color:#555;">Hola <strong>${safeName}</strong>, recibimos tu orden correctamente.</p>
 
       <!-- Order ID chip -->
       <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:inline-block;">
@@ -105,7 +119,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
         </tr>
         <tr>
           <td style="padding:12px 18px;font-size:13px;color:#6b7280;border-bottom:1px solid #f0f0f0;white-space:nowrap;">Dirección</td>
-          <td style="padding:12px 18px;font-size:13px;font-weight:600;color:#111;border-bottom:1px solid #f0f0f0;">${customer.address}</td>
+          <td style="padding:12px 18px;font-size:13px;font-weight:600;color:#111;border-bottom:1px solid #f0f0f0;">${safeAddress}</td>
         </tr>
         <tr>
           <td style="padding:12px 18px;font-size:13px;color:#6b7280;white-space:nowrap;">Entrega estimada</td>
@@ -145,10 +159,10 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
 
   <!-- Customer info -->
   <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:10px;overflow:hidden;margin-bottom:24px;">
-    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;white-space:nowrap;width:30%;">Cliente</td><td style="padding:10px 16px;font-size:13px;font-weight:600;border-bottom:1px solid #eee;">${customer.name}</td></tr>
-    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Email</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;"><a href="mailto:${customer.email}" style="color:#7c3aed;">${customer.email}</a></td></tr>
-    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Teléfono</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;">${customer.phone}</td></tr>
-    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Dirección</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;">${customer.address}</td></tr>
+    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;white-space:nowrap;width:30%;">Cliente</td><td style="padding:10px 16px;font-size:13px;font-weight:600;border-bottom:1px solid #eee;">${safeName}</td></tr>
+    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Email</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;"><a href="mailto:${safeEmail}" style="color:#7c3aed;">${safeEmail}</a></td></tr>
+    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Teléfono</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;">${safePhone}</td></tr>
+    <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Dirección</td><td style="padding:10px 16px;font-size:13px;border-bottom:1px solid #eee;">${safeAddress}</td></tr>
     <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;border-bottom:1px solid #eee;">Pago</td><td style="padding:10px 16px;font-size:13px;font-weight:600;border-bottom:1px solid #eee;">${paymentLabel}</td></tr>
     <tr><td style="padding:10px 16px;font-size:13px;color:#6b7280;">Total</td><td style="padding:10px 16px;font-size:20px;font-weight:700;color:#7c3aed;">${clp(total)}</td></tr>
   </table>

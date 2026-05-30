@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
-import { getCartTotal, formatCLP } from "@/lib/cart";
+import { getCartTotal, formatCLP, getShippingCost, getOrderTotal, SHIPPING_THRESHOLD } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,9 @@ import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag } from "lucide-react
 
 export default function Checkout() {
   const cart = useCart();
-  const total = getCartTotal(cart);
+  const subtotal = getCartTotal(cart);
+  const shippingCost = getShippingCost(subtotal);
+  const orderTotal = getOrderTotal(subtotal);
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -49,7 +51,7 @@ export default function Checkout() {
       setErrors(errs);
       return;
     }
-    navigate("/pago/mercadopago", { state: { customer: form, cart, total } });
+    navigate("/pago/mercadopago", { state: { customer: form, cart, total: orderTotal } });
   }
 
   return (
@@ -136,10 +138,33 @@ export default function Checkout() {
                 <span>{formatCLP(item.price * item.qty)}</span>
               </div>
             ))}
+            <div className="flex justify-between text-sm text-muted-foreground border-t pt-2">
+              <span>Subtotal</span>
+              <span>{formatCLP(subtotal)}</span>
+            </div>
+            {shippingCost === 0 ? (
+              <div className="flex justify-between text-sm text-green-600 font-semibold">
+                <span>Envío</span>
+                <span>Envío gratis 🎉</span>
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Envío</span>
+                  <span>{formatCLP(shippingCost)}</span>
+                </div>
+                <p className="text-xs text-muted-foreground text-right">
+                  Te faltan {formatCLP(SHIPPING_THRESHOLD - subtotal)} para envío gratis
+                </p>
+              </div>
+            )}
             <div className="border-t pt-2 flex justify-between font-bold">
               <span>Total</span>
-              <span className="text-primary">{formatCLP(total)}</span>
+              <span className="text-primary">{formatCLP(orderTotal)}</span>
             </div>
+            <p className="text-xs text-muted-foreground pt-1">
+              🕐 Tiempo de entrega: máximo 2 semanas
+            </p>
           </div>
 
           <Button

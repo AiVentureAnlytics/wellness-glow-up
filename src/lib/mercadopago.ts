@@ -20,6 +20,7 @@ export async function createPreference(args: {
   cart: CartItem[];
   customer: { name: string; email: string; phone: string; address: string };
   orderId: string;
+  shippingCost?: number;
 }): Promise<MPPreference> {
   const items: MPPreferenceItem[] = args.cart.map((item) => ({
     id: item.id,
@@ -28,6 +29,16 @@ export async function createPreference(args: {
     unit_price: item.price,
     currency_id: "CLP",
   }));
+
+  if (args.shippingCost && args.shippingCost > 0) {
+    items.push({
+      id: "envio",
+      title: "Envío",
+      quantity: 1,
+      unit_price: args.shippingCost,
+      currency_id: "CLP",
+    });
+  }
 
   const res = await fetch("/api/mercadopago/create-preference", {
     method: "POST",

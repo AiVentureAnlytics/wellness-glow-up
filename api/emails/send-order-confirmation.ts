@@ -5,6 +5,13 @@ import { sendOrderEmails, type OrderEmailData } from "../_lib/emails";
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
+  // Require internal secret to prevent unauthorized email sends
+  const internalSecret = process.env.INTERNAL_EMAIL_SECRET;
+  if (!internalSecret) return json({ error: "INTERNAL_EMAIL_SECRET not configured" }, 500);
+  if (req.headers.get("x-internal-secret") !== internalSecret) {
+    return json({ error: "Unauthorized" }, 401);
+  }
+
   let body: unknown;
   try {
     body = await req.json();

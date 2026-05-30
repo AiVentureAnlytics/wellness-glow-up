@@ -62,7 +62,11 @@ export default async function handler(req: Request): Promise<Response> {
   });
   if (!payRes.ok) return json({ error: "MP payment fetch failed" }, 502);
 
-  const payment = (await payRes.json()) as { status: string; external_reference: string | null };
+  const payment = (await payRes.json()) as {
+    status: string;
+    external_reference: string | null;
+    transaction_amount: number;
+  };
 
   // Only act on approved payments
   if (payment.status !== "approved") return json({ ok: true, skipped: payment.status });
@@ -79,6 +83,21 @@ export default async function handler(req: Request): Promise<Response> {
     Authorization: `Bearer ${supabaseKey}`,
     apikey: supabaseKey,
   };
+
+  // Verify paid amount matches order total before committing any changes
+  const orderCheckRes = await fetch(
+    `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=total`,
+    { headers: authHeaders }
+  );
+  if (!orderCheckRes.ok) return json({ error: "Failed to fetch order for verification" }, 502);
+  const orderRows = (await orderCheckRes.json()) as Array<{ total: number }>;
+  if (!orderRows[0]) return json({ error: "Order not found" }, 404);
+  if (Math.abs(Math.round(payment.transaction_amount) - orderRows[0].total) > 1) {
+    console.error(
+      `[webhook] Amount mismatch order=${orderId} paid=${payment.transaction_amount} expected=${orderRows[0].total}`
+    );
+    return json({ error: "Payment amount mismatch" }, 400);
+  }
 
   // Update order status to "verificado"
   const updateRes = await fetch(
