@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,44 +6,45 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 40% 13%;
+    --background: 0 0% 98%;
+    --foreground: 222 25% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 40% 13%;
+    --card-foreground: 222 25% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 40% 13%;
+    --popover-foreground: 222 25% 8%;
 
-    --primary: 217 100% 53%;
+    /* #3B72F0 = hsl(217, 84%, 58%) roughly */
+    --primary: 217 84% 57%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 25% 93%;
-    --secondary-foreground: 220 40% 13%;
+    --secondary: 220 18% 95%;
+    --secondary-foreground: 222 25% 8%;
 
-    --muted: 220 20% 95%;
-    --muted-foreground: 220 15% 46%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 10% 52%;
 
-    --accent: 160 100% 32%;
+    --accent: 155 80% 36%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 70% 53%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 217 100% 53%;
+    --border: 220 14% 91%;
+    --input: 220 14% 91%;
+    --ring: 217 84% 57%;
 
-    --radius: 0.875rem;
+    --radius: 0.625rem;
 
-    /* Custom brand tokens */
-    --brand-gradient: linear-gradient(135deg, hsl(217 100% 53%), hsl(195 100% 50%));
-    --brand-gradient-subtle: linear-gradient(135deg, hsl(220 60% 96%), hsl(195 60% 96%));
-    --brand-glow: 0 8px 32px -8px hsl(217 100% 53% / 0.3);
-    --card-shadow: 0 1px 3px hsl(220 40% 13% / 0.04), 0 6px 24px hsl(220 40% 13% / 0.06);
-    --card-shadow-hover: 0 4px 12px hsl(220 40% 13% / 0.06), 0 16px 48px hsl(220 40% 13% / 0.1);
+    /* Brand tokens */
+    --brand-gradient: linear-gradient(135deg, hsl(217 84% 57%) 0%, hsl(200 100% 50%) 100%);
+    --brand-gradient-subtle: linear-gradient(135deg, hsl(217 84% 97%) 0%, hsl(200 80% 96%) 100%);
+    --brand-glow: 0 8px 40px -8px hsl(217 84% 57% / 0.32);
+    --card-shadow: 0 1px 2px hsl(222 25% 8% / 0.04), 0 4px 16px hsl(222 25% 8% / 0.06);
+    --card-shadow-hover: 0 2px 4px hsl(222 25% 8% / 0.04), 0 12px 36px hsl(222 25% 8% / 0.10);
 
-    --font-display: 'Outfit', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
 
     --sidebar-background: 0 0% 98%;
@@ -62,15 +63,19 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
+  /* ─── Brand utilities ─── */
   .brand-gradient-bg {
     background: var(--brand-gradient);
   }
@@ -83,12 +88,52 @@
   .brand-gradient-subtle {
     background: var(--brand-gradient-subtle);
   }
+
+  /* ─── Elevation ─── */
   .card-elevated {
     box-shadow: var(--card-shadow);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
   }
   .card-elevated:hover {
     box-shadow: var(--card-shadow-hover);
-    transform: translateY(-4px);
+    transform: translateY(-3px);
+  }
+
+  /* ─── Buttons (extended) ─── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-sm font-semibold text-white transition-all duration-200;
+    background: var(--brand-gradient);
+    box-shadow: 0 1px 2px hsl(222 25% 8% / 0.08), 0 4px 16px hsl(217 84% 57% / 0.22);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px hsl(222 25% 8% / 0.08), 0 8px 24px hsl(217 84% 57% / 0.32);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 h-11 text-sm font-semibold transition-all duration-200 border border-border bg-card text-foreground;
+  }
+  .btn-ghost:hover {
+    @apply bg-muted;
+  }
+
+  /* ─── Section label pill ─── */
+  .section-label {
+    @apply inline-block text-xs font-semibold tracking-widest uppercase text-primary bg-primary/10 px-3 py-1 rounded-full;
+  }
+
+  /* ─── Scrollbar ─── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
   }
 }

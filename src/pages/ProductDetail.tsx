@@ -5,7 +5,10 @@ import { formatCLP } from "@/lib/products";
 import { useProduct } from "@/hooks/useProducts";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Minus, Plus, ArrowLeft, Truck, PackageX, Loader2 } from "lucide-react";
+import {
+  ShoppingCart, Minus, Plus, ArrowLeft, Truck,
+  PackageX, Loader2, Shield, RefreshCw, CheckCircle2,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import PageMeta from "@/components/PageMeta";
 
@@ -24,27 +27,30 @@ export default function ProductDetail() {
 
   if (isLoading) {
     return (
-      <div className="container py-20 flex justify-center">
-        <Loader2 size={32} className="animate-spin text-muted-foreground" />
+      <div className="container py-24 flex justify-center">
+        <Loader2 size={28} className="animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="container py-20 max-w-md text-center">
-        <PackageX size={64} className="mx-auto text-muted-foreground/40 mb-4" />
+      <div className="container py-24 max-w-md text-center">
+        <PackageX size={56} className="mx-auto text-muted-foreground/30 mb-5" />
         <h1 className="font-display text-2xl font-bold">Producto no encontrado</h1>
         <p className="text-muted-foreground mt-2">
           El producto que buscas ya no está disponible o el link es inválido.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-          <Button asChild className="brand-gradient-bg text-primary-foreground rounded-full px-8">
-            <Link to="/suplementos">Ver suplementos</Link>
-          </Button>
-          <Button asChild variant="outline" className="rounded-full px-8">
-            <Link to="/">Volver al inicio</Link>
-          </Button>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-7">
+          <Link to="/suplementos" className="btn-primary h-11 px-7 text-sm">
+            Ver suplementos
+          </Link>
+          <Link
+            to="/"
+            className="btn-ghost h-11 px-7 text-sm"
+          >
+            Volver al inicio
+          </Link>
         </div>
       </div>
     );
@@ -56,7 +62,7 @@ export default function ProductDetail() {
   const handleAdd = () => {
     if (!inStock) return;
     addToCart(product.id, product.name, product.price, product.img, qty);
-    toast.success(`${product.name} (x${qty}) agregado al carrito`);
+    toast.success(`${product.name} (×${qty}) agregado al carrito`);
     setQty(1);
   };
 
@@ -86,7 +92,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="container py-12">
+    <div className="container py-10 pb-20">
       <PageMeta
         title={product.name}
         description={metaDescription}
@@ -98,100 +104,170 @@ export default function ProductDetail() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Link to={backTo} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
-        <ArrowLeft size={16} /> Volver a {product.section}
+
+      <Link
+        to={backTo}
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
+      >
+        <ArrowLeft size={15} />
+        Volver a {product.section}
       </Link>
 
-      <div className="grid md:grid-cols-2 gap-10 items-start">
+      <div className="grid md:grid-cols-2 gap-12 items-start">
+        {/* ── Image column ── */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
+          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="bg-card rounded-2xl p-6 card-elevated"
+          transition={{ duration: 0.45 }}
+          className="md:sticky md:top-24"
         >
-          <img
-            src={product.img}
-            alt={product.name}
-            className="w-full rounded-xl aspect-square object-contain bg-white"
-            width={800}
-            height={800}
-            onError={(e) => {
-              const target = e.currentTarget;
-              if (!target.dataset.fallback) {
-                target.dataset.fallback = "1";
-                target.src = "/placeholder.svg";
-              }
-            }}
-          />
+          <div className="bg-muted/20 rounded-2xl border border-border/60 p-6 aspect-square flex items-center justify-center overflow-hidden">
+            <img
+              src={product.img}
+              alt={product.name}
+              className="w-full h-full object-contain drop-shadow-xl"
+              width={800}
+              height={800}
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.dataset.fallback) {
+                  target.dataset.fallback = "1";
+                  target.src = "/placeholder.svg";
+                }
+              }}
+            />
+          </div>
         </motion.div>
 
+        {/* ── Info column ── */}
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
+          initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ duration: 0.45, delay: 0.08 }}
+          className="flex flex-col"
         >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
-              {product.section}
-            </span>
+          {/* Badges */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="section-label">{product.section}</span>
             {product.badge && (
-              <span className="text-xs font-bold text-white bg-foreground px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-foreground text-card px-3 py-1 rounded-full">
                 {product.badge}
               </span>
             )}
             {!inStock && (
-              <span className="text-xs font-bold uppercase tracking-wider bg-destructive text-white px-3 py-1 rounded-full">
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-destructive text-white px-3 py-1 rounded-full">
                 Agotado
               </span>
             )}
             {inStock && lowStock && (
-              <span className="text-xs font-bold uppercase tracking-wider bg-yellow-500 text-white px-3 py-1 rounded-full">
+              <span className="text-[11px] font-bold uppercase tracking-wider bg-amber-500 text-white px-3 py-1 rounded-full">
                 Últimas {product.stock} u.
               </span>
             )}
           </div>
-          <h1 className="font-display text-3xl md:text-4xl font-bold mt-4">{product.name}</h1>
-          <p className="text-muted-foreground mt-3 text-lg">{product.description}</p>
-          <p className="text-3xl font-bold text-primary mt-6">{formatCLP(product.price)}</p>
 
-          <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
-            <Truck size={16} className="text-primary shrink-0" />
-            <span>Llega el <strong className="text-foreground">{getDeliveryDate()}</strong> · Despacho a todo Chile 🇨🇱</span>
+          <h1 className="font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+            {product.name}
+          </h1>
+
+          {product.description && (
+            <p className="text-muted-foreground mt-4 text-base leading-relaxed">
+              {product.description}
+            </p>
+          )}
+
+          {/* Price */}
+          <div className="mt-6 flex items-baseline gap-3">
+            <p className="font-display text-4xl font-bold tracking-tight">
+              {formatCLP(product.price)}
+            </p>
           </div>
 
+          {/* Delivery */}
+          <div className="flex items-center gap-2.5 mt-4 text-sm bg-muted/40 border border-border/50 rounded-xl px-4 py-3">
+            <Truck size={16} className="text-primary shrink-0" />
+            <span className="text-muted-foreground">
+              Llega el{" "}
+              <strong className="text-foreground font-semibold">{getDeliveryDate()}</strong>
+              {" "}· Despacho a todo Chile
+            </span>
+          </div>
+
+          {/* Details */}
           {product.details.length > 0 && (
-            <div className="mt-6 space-y-2">
-              <h3 className="font-display font-semibold">Características:</h3>
-              <ul className="space-y-2">
+            <div className="mt-7 border-t border-border/60 pt-6">
+              <h3 className="font-display font-semibold text-sm uppercase tracking-widest text-muted-foreground mb-4">
+                Características
+              </h3>
+              <ul className="space-y-2.5">
                 {product.details.map((d, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <span className="text-primary mt-0.5 font-bold">✓</span>
-                    {d}
+                  <li key={i} className="flex items-start gap-2.5 text-sm">
+                    <CheckCircle2 size={15} className="text-primary mt-0.5 shrink-0" />
+                    <span className="text-muted-foreground leading-relaxed">{d}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {inStock && (
-            <div className="flex items-center gap-3 mt-6">
-              <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(Math.max(1, qty - 1))}>
-                <Minus size={16} />
-              </Button>
-              <span className="text-lg font-bold w-8 text-center">{qty}</span>
-              <Button variant="outline" size="icon" className="rounded-full" onClick={() => setQty(Math.min(qty + 1, product.stock))}>
-                <Plus size={16} />
-              </Button>
+          {/* Qty + Add to cart */}
+          {inStock ? (
+            <div className="mt-8 flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-muted-foreground">Cantidad</span>
+                <div className="flex items-center gap-2 bg-muted/40 rounded-full px-1 py-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full w-8 h-8 hover:bg-background"
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                  >
+                    <Minus size={14} />
+                  </Button>
+                  <span className="text-sm font-bold w-6 text-center tabular-nums">{qty}</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full w-8 h-8 hover:bg-background"
+                    onClick={() => setQty(Math.min(qty + 1, product.stock))}
+                  >
+                    <Plus size={14} />
+                  </Button>
+                </div>
+              </div>
+
+              <button
+                onClick={handleAdd}
+                className="btn-primary w-full h-14 text-base justify-center rounded-xl"
+              >
+                <ShoppingCart size={19} />
+                Agregar al carrito · {formatCLP(product.price * qty)}
+              </button>
             </div>
+          ) : (
+            <button
+              disabled
+              className="mt-8 w-full h-14 text-base rounded-xl bg-muted text-muted-foreground cursor-not-allowed font-semibold"
+            >
+              Sin stock
+            </button>
           )}
 
-          <Button
-            onClick={handleAdd}
-            disabled={!inStock}
-            className="w-full mt-6 brand-gradient-bg text-primary-foreground rounded-full h-14 text-lg font-semibold gap-2 disabled:opacity-50"
-          >
-            <ShoppingCart size={20} />
-            {inStock ? `Agregar al carrito · ${formatCLP(product.price * qty)}` : "Sin stock"}
-          </Button>
+          {/* Trust row */}
+          <div className="mt-6 flex flex-wrap gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Shield size={13} className="text-primary" />
+              Pago 100% seguro
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Truck size={13} className="text-primary" />
+              Envío a todo Chile
+            </span>
+            <span className="flex items-center gap-1.5">
+              <RefreshCw size={13} className="text-primary" />
+              Cambios y devoluciones
+            </span>
+          </div>
         </motion.div>
       </div>
     </div>
