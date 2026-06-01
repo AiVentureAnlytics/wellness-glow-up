@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Watch, Pill, Heart, Zap, Shield, Truck, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Watch, Pill, Heart, Zap, Shield, Truck, CheckCircle2, Star, Package } from "lucide-react";
 import { motion } from "framer-motion";
 import heroBg from "@/assets/helio-strap-action.webp";
 import PageMeta from "@/components/PageMeta";
@@ -10,32 +10,56 @@ const categories = [
     title: "Wearables",
     desc: "Tecnología de vanguardia para tracking de salud y rendimiento deportivo.",
     to: "/wearables",
-    gradient: "from-[#3B72F0] to-[#06b6d4]",
-    bg: "bg-blue-50",
+    gradient: "from-[#1e3a8a] via-[#1d4ed8] to-[#3B72F0]",
+    tag: "Smart Fitness",
   },
   {
     icon: Pill,
     title: "Suplementos",
-    desc: "Proteínas, aminoácidos y fórmulas premium de importación directa.",
+    desc: "Proteínas, creatinas y fórmulas premium de importación directa.",
     to: "/suplementos",
-    gradient: "from-emerald-500 to-teal-400",
-    bg: "bg-emerald-50",
+    gradient: "from-[#065f46] via-[#047857] to-[#10b981]",
+    tag: "Más vendido",
   },
   {
     icon: Heart,
     title: "Wellness",
     desc: "Descanso, manejo del estrés y bienestar para tu mejor versión.",
     to: "/wellness",
-    gradient: "from-violet-500 to-purple-400",
-    bg: "bg-violet-50",
+    gradient: "from-[#4c1d95] via-[#6d28d9] to-[#8b5cf6]",
+    tag: "Bienestar integral",
   },
 ];
 
-const stats = [
-  { value: "10K+", label: "Clientes" },
-  { value: "99%", label: "Satisfacción" },
-  { value: "24h", label: "Despacho" },
-  { value: "100%", label: "Original" },
+const trustItems = [
+  {
+    icon: Zap,
+    title: "Importadores Directos",
+    desc: "Sin intermediarios en Chile",
+    color: "text-amber-500",
+    bg: "bg-amber-50",
+  },
+  {
+    icon: Truck,
+    title: "Despacho a domicilio",
+    desc: "A todo Chile con seguimiento",
+    color: "text-primary",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: Shield,
+    title: "Pago 100% Seguro",
+    desc: "MercadoPago",
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Productos Originales",
+    desc: "Certificados de autenticidad",
+    color: "text-violet-600",
+    bg: "bg-violet-50",
+  },
 ];
 
 const values = [
@@ -51,16 +75,28 @@ const values = [
   },
   {
     icon: Truck,
-    title: "Despacho 24–72 h",
+    title: "Despacho a todo Chile",
     desc: "Stock en Chile. Seguimiento en tiempo real a todo el país.",
   },
 ];
 
-const brandsBullets = [
-  "Dymatize — USA",
-  "OstroVit — Europa",
-  "Helio Strap — Tech",
-  "Importación directa",
+const brands = [
+  { name: "Dymatize", origin: "USA" },
+  { name: "OstroVit", origin: "Europa" },
+  { name: "MuscleTech", origin: "USA" },
+  { name: "Helio Strap", origin: "Tech" },
+];
+
+const floatingStats = [
+  { icon: Package, label: "Catálogo seleccionado", sub: "Productos premium" },
+  { icon: Truck, label: "Despacho", sub: "Despacho garantizado" },
+  { icon: Shield, label: "100% originales", sub: "Certificados" },
+];
+
+const aboutStats = [
+  { value: "Catálogo", label: "Seleccionado" },
+  { value: "Marcas", label: "Internacionales" },
+  { value: "Máx. 2 semanas", label: "Despacho" },
 ];
 
 const fadeUp = {
@@ -77,12 +113,12 @@ export default function Index() {
     <div>
       <PageMeta
         title="Suplementos, Wearables y Wellness en Chile"
-        description="Level Up — Importadores directos de Dymatize, OstroVit y tecnología wearable en Chile. Proteínas, creatinas, vitaminas y wellness. Despacho a todo Chile en 24-72h."
+        description="Level Up — Importadores directos de Dymatize, OstroVit y tecnología wearable en Chile. Proteínas, creatinas, vitaminas y wellness. Despacho a todo Chile."
         canonical="https://vitrax.cl/"
       />
 
       {/* ── Hero ── */}
-      <section className="relative min-h-[88vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={heroBg}
@@ -91,74 +127,114 @@ export default function Index() {
             width={1920}
             height={1080}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(222,25%,6%)/0.88] via-[hsl(222,25%,6%)/0.65] to-[hsl(222,25%,6%)/0.15]" />
+          {/* Cinematic directional overlay */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(105deg, rgba(6,13,30,0.93) 0%, rgba(6,13,30,0.72) 45%, rgba(6,13,30,0.18) 100%)" }} />
+          {/* Bottom fade to background */}
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="container relative z-10 py-24">
+        {/* Ambient glow */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] pointer-events-none opacity-[0.07]" style={{ background: "radial-gradient(circle, hsl(217 84% 57%) 0%, transparent 68%)" }} />
+
+        <div className="container relative z-10 py-28 md:py-36">
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease: "easeOut" }}
             className="max-w-2xl"
           >
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.15em] text-white/60 mb-5">
-              Importadores directos · Santiago, Chile
-            </span>
-            <h1 className="font-display text-5xl md:text-[4.25rem] font-bold text-white leading-[1.05] tracking-tight">
-              Tu mejor versión<br />
-              empieza{" "}
-              <span className="brand-gradient-text">aquí</span>
-            </h1>
-            <p className="mt-6 text-lg text-white/70 max-w-md leading-relaxed">
-              Suplementos premium, wearables de última generación y wellness — todo en un lugar, con despacho a todo Chile.
-            </p>
-
-            {/* Brand bullets */}
-            <div className="flex flex-wrap gap-x-5 gap-y-2 mt-7">
-              {brandsBullets.map((b) => (
-                <span key={b} className="flex items-center gap-1.5 text-sm text-white/60">
-                  <CheckCircle2 size={13} className="text-primary shrink-0" />
-                  {b}
-                </span>
-              ))}
+            {/* Eyebrow badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-4 py-1.5 mb-7">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/80">
+                Importadores directos · Santiago, Chile
+              </span>
             </div>
 
-            <div className="flex flex-wrap gap-3 mt-9">
-              <Link to="/suplementos" className="btn-primary h-12 px-7 text-base">
+            <h1 className="font-display text-5xl md:text-[4.5rem] font-bold text-white leading-[1.03] tracking-tight">
+              Suplementos premium.<br />
+              <span className="brand-gradient-text">Sin intermediarios.</span>
+            </h1>
+
+            <p className="mt-6 text-lg md:text-xl text-white/65 max-w-md leading-relaxed">
+              Dymatize, OstroVit y wearables de última generación.
+              Stock en Chile — despacho a todo el país.
+            </p>
+
+            <div className="flex flex-wrap gap-3 mt-10">
+              <Link to="/suplementos" className="btn-primary h-12 px-8 text-base">
                 Ver suplementos
-                <ArrowRight size={16} />
+                <ArrowRight size={17} />
               </Link>
               <Link
                 to="/wearables"
-                className="inline-flex items-center gap-2 rounded-full px-7 h-12 text-base font-semibold text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full px-8 h-12 text-base font-semibold text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-all duration-200"
               >
                 Ver wearables
               </Link>
             </div>
+
+            {/* Trust micro-row */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-8">
+              <div className="flex items-center gap-1.5">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <Star key={i} size={12} className="text-amber-400 fill-amber-400" />
+                ))}
+                <span className="text-white/50 text-xs ml-1.5">Despacho garantizado</span>
+              </div>
+              <span className="text-white/20 hidden md:block">·</span>
+              <div className="flex items-center gap-1.5 text-white/50 text-xs">
+                <CheckCircle2 size={12} className="text-emerald-400" />
+                Productos 100% originales
+              </div>
+            </div>
           </motion.div>
         </div>
+
+        {/* Floating stats card — large screens only */}
+        <motion.div
+          initial={{ opacity: 0, x: 32 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.65, delay: 0.35, ease: "easeOut" }}
+          className="absolute right-[7%] top-1/2 -translate-y-1/2 hidden xl:block"
+        >
+          <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 space-y-4 min-w-[210px]">
+            {floatingStats.map((item) => (
+              <div key={item.label} className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl brand-gradient-bg flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-white text-sm font-semibold leading-tight">{item.label}</p>
+                  <p className="text-white/50 text-xs">{item.sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </section>
 
-      {/* ── Stats strip ── */}
+      {/* ── Trust / Benefits strip ── */}
       <section className="border-y border-border/60 bg-card">
         <div className="container py-0">
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-border/60">
-            {stats.map((s, i) => (
+            {trustItems.map((item, i) => (
               <motion.div
-                key={s.label}
+                key={item.title}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
                 custom={i}
-                className="py-7 text-center px-4"
+                className="py-6 px-5 flex items-center gap-3.5"
               >
-                <p className="font-display text-3xl md:text-4xl font-bold brand-gradient-text tracking-tight">
-                  {s.value}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1 font-medium uppercase tracking-widest">
-                  {s.label}
-                </p>
+                <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center shrink-0`}>
+                  <item.icon size={20} className={item.color} />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm leading-snug">{item.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -198,28 +274,66 @@ export default function Index() {
               >
                 <Link
                   to={cat.to}
-                  className="group block bg-card rounded-2xl overflow-hidden border border-border/60 hover:border-primary/25 transition-all duration-300"
-                  style={{ boxShadow: "var(--card-shadow)" }}
+                  className="group block rounded-2xl overflow-hidden border border-transparent hover:shadow-xl transition-all duration-300 card-elevated"
                 >
-                  <div className={`${cat.bg} px-8 pt-8 pb-6`}>
+                  {/* Full-gradient header */}
+                  <div className={`bg-gradient-to-br ${cat.gradient} px-8 pt-10 pb-8 relative overflow-hidden`}>
+                    {/* Subtle dot texture */}
                     <div
-                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}
-                    >
-                      <cat.icon size={26} className="text-white" />
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+                        backgroundSize: "22px 22px",
+                      }}
+                    />
+                    {/* Tag */}
+                    <span className="relative inline-block text-[10px] font-bold tracking-widest uppercase bg-white/20 text-white/90 px-2.5 py-1 rounded-full mb-5">
+                      {cat.tag}
+                    </span>
+                    <div className="relative">
+                      <cat.icon
+                        size={42}
+                        className="text-white/85 mb-4 group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <h3 className="font-display text-2xl font-bold text-white">{cat.title}</h3>
+                      <p className="text-sm text-white/65 mt-2 leading-relaxed">{cat.desc}</p>
                     </div>
-                    <h3 className="font-display text-xl font-bold mt-5">{cat.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{cat.desc}</p>
                   </div>
-                  <div className="px-8 py-4 border-t border-border/40 flex items-center justify-between">
+                  {/* Footer row */}
+                  <div className="px-8 py-4 bg-card border-t border-border/40 flex items-center justify-between">
                     <span className="text-sm font-semibold text-primary">Ver productos</span>
                     <ArrowRight
                       size={16}
-                      className="text-primary translate-x-0 group-hover:translate-x-1 transition-transform duration-200"
+                      className="text-primary group-hover:translate-x-1 transition-transform duration-200"
                     />
                   </div>
                 </Link>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Brands strip ── */}
+      <section className="border-y border-border/40 bg-muted/20 py-9">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+            <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-muted-foreground shrink-0">
+              Marcas que importamos
+            </p>
+            <div className="hidden md:block w-px h-7 bg-border/60" />
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-10 gap-y-3">
+              {brands.map((b) => (
+                <div key={b.name} className="flex items-center gap-2">
+                  <span className="font-display font-bold text-xl tracking-tight text-foreground/75 hover:text-foreground transition-colors duration-200">
+                    {b.name}
+                  </span>
+                  <span className="text-[9px] font-semibold tracking-widest uppercase text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                    {b.origin}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -237,17 +351,29 @@ export default function Index() {
             >
               <span className="section-label">Quiénes somos</span>
               <h2 className="font-display text-4xl md:text-5xl font-bold mt-4 tracking-tight">
-                Creemos en{" "}
-                <span className="brand-gradient-text">tu potencial</span>
+                Somos los{" "}
+                <span className="brand-gradient-text">importadores</span>{" "}
+                que querías
               </h2>
               <p className="mt-5 text-muted-foreground text-lg leading-relaxed">
-                En Level Up seleccionamos cada producto con un solo criterio:{" "}
+                Seleccionamos cada producto con un solo criterio:{" "}
                 <strong className="text-foreground">que realmente funcione.</strong>
               </p>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Importadores directos de marcas como Dymatize y OstroVit. Desde suplementos
-                de grado farmacéutico hasta tecnología wearable de vanguardia.
+                Importación directa de Dymatize, OstroVit y más marcas top de EE.UU. y Europa.
+                Productos de grado farmacéutico con trazabilidad completa, disponibles en Chile.
               </p>
+
+              {/* Credibility mini-stats */}
+              <div className="grid grid-cols-3 gap-4 mt-8 border-t border-border/50 pt-8">
+                {aboutStats.map((s) => (
+                  <div key={s.label}>
+                    <p className="font-display text-2xl font-bold brand-gradient-text">{s.value}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 uppercase tracking-wider font-medium">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+
               <Link
                 to="/suplementos"
                 className="btn-primary mt-8 inline-flex h-11 px-6 text-sm"
@@ -284,9 +410,12 @@ export default function Index() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative overflow-hidden brand-gradient-bg py-24">
-        {/* Subtle noise pattern overlay */}
+      <section className="relative overflow-hidden brand-gradient-bg py-28">
+        {/* Noise overlay */}
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
+        {/* Ambient blobs */}
+        <div className="absolute -top-48 -right-48 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-48 -left-48 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
         <div className="container relative z-10 text-center">
           <motion.div
@@ -296,26 +425,27 @@ export default function Index() {
             variants={fadeUp}
             custom={0}
           >
-            <p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-4">
+            <p className="text-white/55 text-[11px] font-semibold uppercase tracking-[0.2em] mb-4">
               Listo para empezar
             </p>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-white tracking-tight">
-              ¿Qué esperas para<br className="hidden md:block" /> dar el siguiente paso?
+              Tu próximo nivel<br className="hidden md:block" /> empieza hoy
             </h2>
-            <p className="mt-4 text-white/70 max-w-lg mx-auto text-lg leading-relaxed">
-              Explora nuestro catálogo completo y encuentra lo que necesitas para rendir al máximo.
+            <p className="mt-5 text-white/65 max-w-lg mx-auto text-lg leading-relaxed">
+              Explora nuestro catálogo completo de suplementos, wearables y wellness.
+              Despacho a todo Chile.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 mt-9">
+            <div className="flex flex-wrap justify-center gap-3 mt-10">
               <Link
                 to="/suplementos"
-                className="inline-flex items-center gap-2 rounded-full px-7 h-12 text-sm font-semibold bg-white text-[hsl(217,84%,57%)] hover:bg-white/95 transition-all duration-200 shadow-lg"
+                className="inline-flex items-center gap-2 rounded-full px-8 h-12 text-sm font-semibold bg-white text-[hsl(217,84%,57%)] hover:bg-white/95 transition-all duration-200 shadow-lg"
               >
                 Ver Suplementos
                 <ArrowRight size={15} />
               </Link>
               <Link
                 to="/wearables"
-                className="inline-flex items-center gap-2 rounded-full px-7 h-12 text-sm font-semibold border border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-200"
+                className="inline-flex items-center gap-2 rounded-full px-8 h-12 text-sm font-semibold border border-white/30 text-white hover:bg-white/10 hover:border-white/50 transition-all duration-200"
               >
                 Ver Wearables
               </Link>
