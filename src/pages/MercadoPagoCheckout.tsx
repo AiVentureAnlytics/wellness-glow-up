@@ -48,9 +48,14 @@ export default function MercadoPagoCheckout() {
       }
 
       // 3. Crear la orden en Supabase
-      const { data: order, error: orderError } = await supabase
+      // UUID generado en cliente: evita .select() tras INSERT
+      // (.select() activa RETURNING * que requiere SELECT policy — ahora restringida)
+      const orderId = crypto.randomUUID();
+
+      const { error: orderError } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
           status: "pendiente_pago",
           total,
           customer_name: customer.name,
@@ -59,14 +64,12 @@ export default function MercadoPagoCheckout() {
           customer_address: customer.address,
           payment_method: "mercadopago",
           user_id: null,
-        })
-        .select()
-        .single();
+        });
 
       if (orderError) throw new Error(orderError.message);
 
       const items = cart.map((item) => ({
-        order_id: order.id,
+        order_id: orderId,
         product_id: item.id,
         product_name: item.name,
         price: item.price,
@@ -78,10 +81,10 @@ export default function MercadoPagoCheckout() {
       if (itemsError) throw new Error(itemsError.message);
 
       // 4. Crear preferencia MercadoPago
-      const pref = await createPreference({ cart, customer, orderId: order.id, shippingCost });
+      const pref = await createPreference({ cart, customer, orderId, shippingCost });
 
       // 5. Guardar ID de orden y redirigir — el carrito se limpia en /pago/exito
-      sessionStorage.setItem("pending_order_id", order.id);
+      sessionStorage.setItem("pending_order_id", orderId);
 
       // Usar sandbox en TEST, init_point real en PROD
       const redirectUrl = isMPTestMode() ? pref.sandbox_init_point : pref.init_point;
