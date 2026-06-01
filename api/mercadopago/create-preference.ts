@@ -33,15 +33,19 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: "No items provided" }, 400);
   }
 
+  // "envio" is a virtual shipping item — not in products table
+  const productItems = clientItems.filter((i) => i.id !== "envio");
+  const hasShipping = clientItems.some((i) => i.id === "envio");
+
   // Validate product IDs are safe slugs (word chars + hyphens only)
-  for (const item of clientItems) {
+  for (const item of productItems) {
     if (!item.id || !/^[\w-]+$/.test(String(item.id))) {
       return json({ error: `Invalid product ID: ${item.id}` }, 400);
     }
   }
 
   // Fetch authoritative prices from DB — never trust client-supplied unit_price
-  const productIds = clientItems.map((i) => String(i.id)).join(",");
+  const productIds = productItems.map((i) => String(i.id)).join(",");
   const priceRes = await fetch(
     `${supabaseUrl}/rest/v1/products?id=in.(${productIds})&select=id,price,active`,
     {
@@ -60,7 +64,7 @@ export default async function handler(req: Request): Promise<Response> {
   }>;
 
   const items = [];
-  for (const clientItem of clientItems) {
+  for (const clientItem of productItems) {
     const product = dbProducts.find((p) => p.id === clientItem.id);
     if (!product || !product.active) {
       return json({ error: `Product not found or inactive: ${clientItem.id}` }, 400);
@@ -72,6 +76,21 @@ export default async function handler(req: Request): Promise<Response> {
       unit_price: product.price, // authoritative price from DB
       currency_id: "CLP",
     });
+  }
+
+  // Calculate shipping server-side: free above $40.000, otherwise $3.000
+  const productSubtotal = items.reduce((sum, i) => sum + i.unit_price * i.quantity, 0);
+  if (hasShipping) {
+    const shippingPrice = productSubtotal >= 40000 ? 0 : 3000;
+    if (shippingPrice > 0) {
+      items.push({
+        id: "envio",
+        title: "Envío",
+        quantity: 1,
+        unit_price: shippingPrice,
+        currency_id: "CLP",
+      });
+    }
   }
 
   // Recalculate total server-side and patch the order so DB matches what MP will charge
