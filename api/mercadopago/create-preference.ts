@@ -115,6 +115,7 @@ export default async function handler(req: Request): Promise<Response> {
   const preference = {
     ...safeBody,
     items,
+    notification_url: `${APP_URL}/api/mercadopago/webhook`,
     back_urls: {
       success: `${APP_URL}/pago/exito`,
       failure: `${APP_URL}/pago/error`,
