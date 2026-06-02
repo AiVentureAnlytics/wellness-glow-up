@@ -33,5 +33,4 @@ export interface OrderItem {
   product_name: string;
   price: number;
   qty: number;
-  img_url: string;
 }

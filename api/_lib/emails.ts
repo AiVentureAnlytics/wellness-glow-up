@@ -35,10 +35,7 @@ function clp(amount: number): string {
  */
 export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn("[emails] RESEND_API_KEY not set — skipping");
-    return;
-  }
+  if (!apiKey) return;
 
   const resend = new Resend(apiKey);
   const from =
@@ -186,7 +183,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
 </body>
 </html>`;
 
-  const results = await Promise.allSettled([
+  await Promise.allSettled([
     resend.emails.send({
       from,
       to: customer.email,
@@ -200,10 +197,4 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
       html: adminHtml,
     }),
   ]);
-
-  for (const result of results) {
-    if (result.status === "rejected") {
-      console.error("[emails] Send failed:", result.reason);
-    }
-  }
 }

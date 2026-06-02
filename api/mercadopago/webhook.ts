@@ -93,9 +93,6 @@ export default async function handler(req: Request): Promise<Response> {
   const orderRows = (await orderCheckRes.json()) as Array<{ total: number }>;
   if (!orderRows[0]) return json({ error: "Order not found" }, 404);
   if (Math.abs(Math.round(payment.transaction_amount) - orderRows[0].total) > 1) {
-    console.error(
-      `[webhook] Amount mismatch order=${orderId} paid=${payment.transaction_amount} expected=${orderRows[0].total}`
-    );
     return json({ error: "Payment amount mismatch" }, 400);
   }
 

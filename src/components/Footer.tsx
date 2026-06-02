@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoSrc from "@/assets/levelup-lockup.png";
+import logoSrc from "@/assets/levelup-lockup.svg";
 import { Mail, MessageCircle, Instagram, Shield, Truck, CreditCard } from "lucide-react";
 
 const trustItems = [

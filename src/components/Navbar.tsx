@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import logoSrc from "@/assets/levelup-lockup.png";
+import logoSrc from "@/assets/levelup-lockup.svg";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { getCartCount } from "@/lib/cart";

@@ -47,11 +47,7 @@ export async function listDbProducts(opts?: { onlyActive?: boolean }): Promise<P
     query = query.eq("active", true);
   }
   const { data, error } = await query;
-  if (error) {
-    // eslint-disable-next-line no-console
-    console.warn("listDbProducts error:", error.message);
-    return [];
-  }
+  if (error) return [];
   return (data ?? []).map(dbToProduct);
 }
 

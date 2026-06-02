@@ -63,7 +63,6 @@ export default function MercadoPagoCheckout() {
           customer_phone: customer.phone,
           customer_address: customer.address,
           payment_method: "mercadopago",
-          user_id: null,
         });
 
       if (orderError) throw new Error(orderError.message);
@@ -74,7 +73,6 @@ export default function MercadoPagoCheckout() {
         product_name: item.name,
         price: item.price,
         qty: item.qty,
-        img_url: item.img,
       }));
 
       const { error: itemsError } = await supabase.from("order_items").insert(items);

@@ -34,8 +34,7 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     await sendOrderEmails(data as OrderEmailData);
     return json({ ok: true });
-  } catch (err) {
-    console.error("[send-order-confirmation] Error:", err);
+  } catch {
     return json({ error: "Email send failed" }, 500);
   }
 }
