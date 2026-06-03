@@ -12,6 +12,7 @@ export interface DbProduct {
   description: string | null;
   details: string[];
   price: number;
+  original_price: number | null;
   img: string;
   category: Category;
   section: "Suplementos" | "Wellness" | "Wearables";
@@ -26,6 +27,7 @@ export function dbToProduct(row: DbProduct): Product {
     id: row.id,
     name: row.name,
     price: row.price,
+    original_price: row.original_price ?? null,
     priceLabel: new Intl.NumberFormat("es-CL", {
       style: "currency",
       currency: "CLP",

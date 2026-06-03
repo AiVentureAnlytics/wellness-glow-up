@@ -185,10 +185,26 @@ export default function ProductDetail() {
           )}
 
           {/* Price */}
-          <div className="mt-6 flex items-baseline gap-3">
-            <p className="font-display text-4xl font-bold tracking-tight">
-              {formatCLP(product.price)}
-            </p>
+          <div className="mt-6 flex flex-col gap-1">
+            {product.original_price && product.original_price > product.price ? (
+              <>
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="font-display text-4xl font-bold tracking-tight text-blue-600">
+                    {formatCLP(product.price)}
+                  </p>
+                  <span className="text-sm font-bold uppercase tracking-wider bg-red-500 text-white px-3 py-1 rounded-full">
+                    {Math.round((1 - product.price / product.original_price) * 100)}% OFF
+                  </span>
+                </div>
+                <p className="text-muted-foreground text-lg line-through">
+                  {formatCLP(product.original_price)}
+                </p>
+              </>
+            ) : (
+              <p className="font-display text-4xl font-bold tracking-tight">
+                {formatCLP(product.price)}
+              </p>
+            )}
           </div>
 
           {/* Delivery */}

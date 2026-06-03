@@ -1,6 +1,6 @@
 export const config = { runtime: "edge" };
 
-const BASE_URL = "https://vitrax.cl";
+const BASE_URL = "https://levelupp.cl";
 
 const STATIC_ROUTES = [
   { loc: "/", changefreq: "weekly", priority: "1.0" },

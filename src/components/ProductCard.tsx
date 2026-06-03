@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { addToCart } from "@/lib/cart";
+import { formatCLP } from "@/lib/products";
 import { toast } from "sonner";
 import { ShoppingCart, Eye } from "lucide-react";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ interface Props {
   id: string;
   name: string;
   price: number;
+  original_price?: number | null;
   priceLabel: string;
   img: string;
   description?: string;
@@ -17,7 +19,7 @@ interface Props {
 }
 
 export default function ProductCard({
-  id, name, price, priceLabel, img, description, detailUrl, stock, badge,
+  id, name, price, original_price, priceLabel, img, description, detailUrl, stock, badge,
 }: Props) {
   const inStock = (stock ?? 999) > 0;
   const lowStock = inStock && (stock ?? 999) <= 5;
@@ -94,7 +96,19 @@ export default function ProductCard({
         )}
 
         <div className="mt-auto pt-3 flex items-center justify-between gap-2">
-          <p className="font-display text-xl font-bold text-foreground tracking-tight">{priceLabel}</p>
+          {original_price && original_price > price ? (
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <p className="font-display text-xl font-bold text-blue-600 tracking-tight">{priceLabel}</p>
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-red-500 text-white px-2 py-0.5 rounded-full shrink-0">
+                  {Math.round((1 - price / original_price) * 100)}% OFF
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground line-through">{formatCLP(original_price)}</p>
+            </div>
+          ) : (
+            <p className="font-display text-xl font-bold text-foreground tracking-tight">{priceLabel}</p>
+          )}
 
           <button
             onClick={handleAdd}

@@ -67,6 +67,7 @@ export default function Wellness() {
                   detailUrl={`/producto/${p.id}`}
                   stock={p.stock}
                   badge={p.badge}
+                  original_price={p.original_price}
                 />
               </motion.div>
             ))}
