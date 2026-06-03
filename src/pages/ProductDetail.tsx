@@ -16,8 +16,16 @@ const BASE_URL = "https://vitrax.cl";
 
 function getDeliveryDate() {
   const d = new Date();
-  d.setDate(d.getDate() + 3);
-  return d.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
+  let businessDays = 0;
+  while (businessDays < 8) {
+    d.setDate(d.getDate() + 1);
+    const dow = d.getDay();
+    if (dow !== 0 && dow !== 6) businessDays++;
+  }
+  const weekday = d.toLocaleDateString("es-CL", { weekday: "long" });
+  const day = d.getDate();
+  const month = d.toLocaleDateString("es-CL", { month: "long" });
+  return `${weekday}, ${day} de ${month}`;
 }
 
 export default function ProductDetail() {
