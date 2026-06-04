@@ -146,7 +146,7 @@ export default function MercadoPagoCheckout() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-3">
-            🕐 Tiempo de entrega: máximo 2 semanas
+            🕐 Tiempo de entrega: 3 días hábiles
           </p>
         </div>
 

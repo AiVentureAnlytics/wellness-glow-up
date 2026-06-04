@@ -17,7 +17,7 @@ const BASE_URL = "https://vitrax.cl";
 function getDeliveryDate() {
   const d = new Date();
   let businessDays = 0;
-  while (businessDays < 8) {
+  while (businessDays < 3) {
     d.setDate(d.getDate() + 1);
     const dow = d.getDay();
     if (dow !== 0 && dow !== 6) businessDays++;

@@ -35,7 +35,7 @@ const trustItems = [
   {
     icon: Zap,
     title: "Importadores Directos",
-    desc: "Sin intermediarios en Chile",
+    desc: "Envío a todo Chile",
     color: "text-amber-500",
     bg: "bg-amber-50",
   },
@@ -96,7 +96,7 @@ const floatingStats = [
 const aboutStats = [
   { value: "Catálogo", label: "Seleccionado" },
   { value: "Marcas", label: "Internacionales" },
-  { value: "Máx. 2 semanas", label: "Despacho" },
+  { value: "3 días hábiles", label: "Despacho" },
 ];
 
 const fadeUp = {
@@ -153,7 +153,7 @@ export default function Index() {
 
             <h1 className="font-display text-5xl md:text-[4.5rem] font-bold text-white leading-[1.03] tracking-tight">
               Suplementos premium.<br />
-              <span className="brand-gradient-text">Sin intermediarios.</span>
+              <span className="brand-gradient-text">Envío a todo Chile.</span>
             </h1>
 
             <p className="mt-6 text-lg md:text-xl text-white/65 max-w-md leading-relaxed">

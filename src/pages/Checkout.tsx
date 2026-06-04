@@ -163,7 +163,7 @@ export default function Checkout() {
               <span className="text-primary">{formatCLP(orderTotal)}</span>
             </div>
             <p className="text-xs text-muted-foreground pt-1">
-              🕐 Tiempo de entrega: máximo 2 semanas
+              🕐 Tiempo de entrega: 3 días hábiles
             </p>
           </div>
 
