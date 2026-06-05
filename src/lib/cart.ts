@@ -63,14 +63,23 @@ export function getCartTotal(cart: CartItem[]) {
 }
 
 export const SHIPPING_THRESHOLD = 40000;
-export const SHIPPING_COST = 3000;
 
-export function getShippingCost(subtotal: number): number {
-  return subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-}
-
-export function getOrderTotal(subtotal: number): number {
-  return subtotal + getShippingCost(subtotal);
+export async function getShippingQuote(
+  communeId: number,
+  items: { id: string; quantity: number }[]
+): Promise<{ shippingCost: number; courierName: string | null }> {
+  try {
+    const res = await fetch("/api/shipit/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commune_id: communeId, items }),
+    });
+    if (!res.ok) return { shippingCost: 3000, courierName: null };
+    const data = await res.json() as { shippingCost: number; courierName: string | null };
+    return { shippingCost: data.shippingCost, courierName: data.courierName };
+  } catch {
+    return { shippingCost: 3000, courierName: null };
+  }
 }
 
 export function getCartCount(cart: CartItem[]) {

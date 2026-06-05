@@ -110,6 +110,14 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: `Order update failed: ${err}` }, 502);
   }
 
+  // Fire and forget — create Shipit shipment
+  const shipitUrl = new URL("/api/shipit/create-shipment", req.url).toString();
+  fetch(shipitUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ order_id: orderId }),
+  }).catch(() => {}); // never block webhook response
+
   // Decrement stock via idempotent SECURITY DEFINER RPC
   const rpcRes = await fetch(`${supabaseUrl}/rest/v1/rpc/decrement_order_stocks`, {
     method: "POST",

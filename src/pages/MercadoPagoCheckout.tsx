@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import { formatCLP, CartItem, getCartTotal, getShippingCost } from "@/lib/cart";
+import { formatCLP, CartItem } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
 import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,11 @@ import { CreditCard, Loader2, ExternalLink, AlertCircle, ShoppingBag } from "luc
 import { toast } from "sonner";
 
 interface CheckoutState {
-  customer: { name: string; email: string; phone: string; address: string };
+  customer: { name: string; email: string; phone: string; address: string; commune_id?: number; commune_name?: string };
   cart: CartItem[];
   total: number;
+  shippingCost?: number;
+  courierName?: string | null;
 }
 
 export default function MercadoPagoCheckout() {
@@ -27,8 +29,7 @@ export default function MercadoPagoCheckout() {
 
   if (!state) return null;
 
-  const { customer, cart, total } = state;
-  const shippingCost = getShippingCost(getCartTotal(cart));
+  const { customer, cart, total, shippingCost = 3000, courierName } = state;
 
   async function handlePay() {
     setError("");
@@ -62,6 +63,8 @@ export default function MercadoPagoCheckout() {
           customer_email: customer.email,
           customer_phone: customer.phone,
           customer_address: customer.address,
+          shipping_commune_id: customer.commune_id,
+          shipping_commune_name: customer.commune_name,
           payment_method: "mercadopago",
         });
 

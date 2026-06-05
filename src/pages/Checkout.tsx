@@ -1,27 +1,124 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
-import { getCartTotal, formatCLP, getShippingCost, getOrderTotal, SHIPPING_THRESHOLD } from "@/lib/cart";
+import { getCartTotal, formatCLP, getShippingQuote } from "@/lib/cart";
+import { filterCommunes, type ShipitCommune } from "@/lib/shipit-communes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag } from "lucide-react";
+import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag, Truck } from "lucide-react";
 
 export default function Checkout() {
   const cart = useCart();
   const subtotal = getCartTotal(cart);
-  const shippingCost = getShippingCost(subtotal);
-  const orderTotal = getOrderTotal(subtotal);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Commune combobox
+  const [communeSearch, setCommuneSearch] = useState("");
+  const [commune, setCommune] = useState<ShipitCommune | null>(null);
+  const [communeOpen, setCommuneOpen] = useState(false);
+  const communeRef = useRef<HTMLDivElement>(null);
+
+  // Shipping quote
+  const [shippingCost, setShippingCost] = useState<number | null>(null);
+  const [courierName, setCourierName] = useState<string | null>(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function onMouseDown(e: MouseEvent) {
+      if (communeRef.current && !communeRef.current.contains(e.target as Node)) {
+        setCommuneOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, []);
+
+  // Fetch shipping quote when commune changes
+  const communeId = commune?.id ?? null;
+  useEffect(() => {
+    if (communeId === null) {
+      setShippingCost(null);
+      setCourierName(null);
+      return;
+    }
+    let cancelled = false;
+    setShippingLoading(true);
+    setShippingCost(null);
+    setCourierName(null);
+    const items = cart.map((i) => ({ id: i.id, quantity: i.qty }));
+    void getShippingQuote(communeId, items).then((result) => {
+      if (cancelled) return;
+      setShippingCost(result.shippingCost);
+      setCourierName(result.courierName);
+      setShippingLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [communeId]);
+
+  const orderTotal = subtotal + (shippingCost ?? 0);
+  const filteredCommunes = filterCommunes(communeSearch);
+
+  function handleCommuneInput(value: string) {
+    setCommuneSearch(value);
+    setCommuneOpen(true);
+    if (commune) {
+      setCommune(null);
+      setShippingCost(null);
+      setCourierName(null);
+    }
+  }
+
+  function handleCommuneSelect(c: ShipitCommune) {
+    setCommune(c);
+    setCommuneSearch(c.name);
+    setCommuneOpen(false);
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.commune;
+      return next;
+    });
+  }
+
+  function validate() {
+    const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = "Ingresa tu nombre";
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
+    if (!form.phone.trim()) e.phone = "Ingresa tu teléfono";
+    if (!form.address.trim()) e.address = "Ingresa tu dirección de despacho";
+    if (!commune) e.commune = "Selecciona tu comuna de despacho";
+    return e;
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    navigate("/pago/mercadopago", {
+      state: {
+        customer: {
+          ...form,
+          commune_id: commune!.id,
+          commune_name: commune!.name,
+        },
+        cart,
+        total: orderTotal,
+        shippingCost: shippingCost ?? 0,
+        courierName,
+      },
+    });
+  }
 
   if (cart.length === 0) {
     return (
@@ -33,25 +130,6 @@ export default function Checkout() {
         </Button>
       </div>
     );
-  }
-
-  function validate() {
-    const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = "Ingresa tu nombre";
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
-    if (!form.phone.trim()) e.phone = "Ingresa tu teléfono";
-    if (!form.address.trim()) e.address = "Ingresa tu dirección de despacho";
-    return e;
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-    navigate("/pago/mercadopago", { state: { customer: form, cart, total: orderTotal } });
   }
 
   return (
@@ -72,6 +150,7 @@ export default function Checkout() {
         <h1 className="font-display text-3xl font-bold mb-8">Datos de envío</h1>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Nombre */}
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-2">
               <User size={14} /> Nombre completo
@@ -86,6 +165,7 @@ export default function Checkout() {
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
           </div>
 
+          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="flex items-center gap-2">
               <Mail size={14} /> Email
@@ -101,6 +181,7 @@ export default function Checkout() {
             {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
           </div>
 
+          {/* Teléfono */}
           <div className="space-y-2">
             <Label htmlFor="phone" className="flex items-center gap-2">
               <Phone size={14} /> Teléfono
@@ -115,18 +196,56 @@ export default function Checkout() {
             {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
           </div>
 
+          {/* Dirección */}
           <div className="space-y-2">
             <Label htmlFor="address" className="flex items-center gap-2">
               <MapPin size={14} /> Dirección de despacho
             </Label>
             <Input
               id="address"
-              placeholder="Calle, número, ciudad, región"
+              placeholder="Calle, número, departamento"
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               className={errors.address ? "border-destructive" : ""}
             />
             {errors.address && <p className="text-xs text-destructive">{errors.address}</p>}
+          </div>
+
+          {/* Comuna */}
+          <div className="space-y-2">
+            <Label htmlFor="commune" className="flex items-center gap-2">
+              <Truck size={14} /> Comuna de despacho
+            </Label>
+            <div className="relative" ref={communeRef}>
+              <Input
+                id="commune"
+                placeholder="Ej: Providencia, Las Condes…"
+                value={communeSearch}
+                onChange={(e) => handleCommuneInput(e.target.value)}
+                onFocus={() => { if (communeSearch.length > 0 && !commune) setCommuneOpen(true); }}
+                autoComplete="off"
+                className={errors.commune ? "border-destructive" : ""}
+              />
+              {communeOpen && filteredCommunes.length > 0 && (
+                <ul className="absolute z-50 top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg max-h-56 overflow-y-auto">
+                  {filteredCommunes.map((c) => (
+                    <li key={c.id}>
+                      <button
+                        type="button"
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // keep dropdown open until click completes
+                          handleCommuneSelect(c);
+                        }}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
+                      >
+                        {c.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {errors.commune && <p className="text-xs text-destructive">{errors.commune}</p>}
           </div>
 
           {/* Resumen */}
@@ -142,34 +261,49 @@ export default function Checkout() {
               <span>Subtotal</span>
               <span>{formatCLP(subtotal)}</span>
             </div>
-            {shippingCost === 0 ? (
+
+            {/* Shipping row */}
+            {!commune ? (
+              <p className="text-xs text-muted-foreground text-right italic">
+                Selecciona tu comuna para ver el costo de envío
+              </p>
+            ) : shippingLoading ? (
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Envío</span>
+                <span>Calculando envío…</span>
+              </div>
+            ) : shippingCost === 0 ? (
               <div className="flex justify-between text-sm text-green-600 font-semibold">
                 <span>Envío</span>
                 <span>Envío gratis 🎉</span>
               </div>
             ) : (
-              <div className="space-y-0.5">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Envío</span>
-                  <span>{formatCLP(shippingCost)}</span>
-                </div>
-                <p className="text-xs text-muted-foreground text-right">
-                  Te faltan {formatCLP(SHIPPING_THRESHOLD - subtotal)} para envío gratis
-                </p>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Envío</span>
+                <span>
+                  {formatCLP(shippingCost ?? 0)}
+                  {courierName && (
+                    <span className="text-muted-foreground ml-1">· {courierName}</span>
+                  )}
+                </span>
               </div>
             )}
+
             <div className="border-t pt-2 flex justify-between font-bold">
               <span>Total</span>
-              <span className="text-primary">{formatCLP(orderTotal)}</span>
+              <span className="text-primary">
+                {shippingCost !== null ? formatCLP(orderTotal) : formatCLP(subtotal)}
+              </span>
             </div>
             <p className="text-xs text-muted-foreground pt-1">
-              🕐 Tiempo de entrega: 3 días hábiles
+              🕐 Tiempo de entrega: 3–5 días hábiles
             </p>
           </div>
 
           <Button
             type="submit"
-            className="w-full brand-gradient-bg text-primary-foreground rounded-full h-14 text-lg font-semibold gap-2 mt-4"
+            disabled={!commune || shippingCost === null || shippingLoading}
+            className="w-full brand-gradient-bg text-primary-foreground rounded-full h-14 text-lg font-semibold gap-2 mt-4 disabled:opacity-50"
           >
             Continuar al pago
             <ArrowRight size={20} />

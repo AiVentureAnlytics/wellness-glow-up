@@ -7,6 +7,7 @@ interface ClientItem {
   id: string;
   title: string;
   quantity: number;
+  unit_price?: number;
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -78,10 +79,8 @@ export default async function handler(req: Request): Promise<Response> {
     });
   }
 
-  // Calculate shipping server-side: free above $40.000, otherwise $3.000
-  const productSubtotal = items.reduce((sum, i) => sum + i.unit_price * i.quantity, 0);
   if (hasShipping) {
-    const shippingPrice = productSubtotal >= 40000 ? 0 : 3000;
+    const shippingPrice = Math.max(0, Math.floor(Number(clientItems.find((i) => i.id === "envio")?.unit_price ?? 0)));
     if (shippingPrice > 0) {
       items.push({
         id: "envio",
