@@ -6,6 +6,11 @@ import PageMeta from "@/components/PageMeta";
 
 export default function Wearables() {
   const { data: products, isLoading, error } = useProductsBySection("Wearables");
+  const sorted = [...products].sort((a, b) => {
+    if (a.stock > 0 && b.stock === 0) return -1;
+    if (a.stock === 0 && b.stock > 0) return 1;
+    return 0;
+  });
 
   return (
     <div>
@@ -50,7 +55,7 @@ export default function Wearables() {
 
         {!isLoading && !error && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {products.map((p, i) => (
+            {sorted.map((p, i) => (
               <motion.div
                 key={p.id}
                 initial={{ opacity: 0, y: 16 }}

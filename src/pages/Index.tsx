@@ -84,7 +84,10 @@ const brands = [
   { name: "Dymatize", origin: "USA" },
   { name: "OstroVit", origin: "Europa" },
   { name: "MuscleTech", origin: "USA" },
-  { name: "Helio Strap", origin: "Tech" },
+  { name: "Finaflex", origin: "USA" },
+  { name: "Amazfit", origin: "China" },
+  { name: "Whoop", origin: "USA" },
+  { name: "Google Fit", origin: "USA" },
 ];
 
 const floatingStats = [
@@ -113,7 +116,7 @@ export default function Index() {
     <div>
       <PageMeta
         title="Suplementos, Wearables y Wellness en Chile"
-        description="Level Up — Importadores directos de Dymatize, OstroVit y tecnología wearable en Chile. Proteínas, creatinas, vitaminas y wellness. Despacho a todo Chile."
+        description="Level Up — Importadores directos de Dymatize, OstroVit, MuscleTech, Finaflex, Amazfit, Whoop y Google Fit en Chile. Proteínas, creatinas, vitaminas y wellness. Despacho a todo Chile."
         canonical="https://vitrax.cl/"
       />
 
@@ -157,7 +160,7 @@ export default function Index() {
             </h1>
 
             <p className="mt-6 text-lg md:text-xl text-white/65 max-w-md leading-relaxed">
-              Dymatize, OstroVit y wearables de última generación.
+              Dymatize, OstroVit, MuscleTech, Amazfit y más.
               Stock en Chile — despacho a todo el país.
             </p>
 
@@ -360,7 +363,7 @@ export default function Index() {
                 <strong className="text-foreground">que realmente funcione.</strong>
               </p>
               <p className="mt-3 text-muted-foreground leading-relaxed">
-                Importación directa de Dymatize, OstroVit y más marcas top de EE.UU. y Europa.
+                Importación directa de Dymatize, OstroVit, MuscleTech y más marcas top de EE.UU., Europa y Asia.
                 Productos de grado farmacéutico con trazabilidad completa, disponibles en Chile.
               </p>
 

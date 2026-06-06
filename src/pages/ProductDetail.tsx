@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addToCart } from "@/lib/cart";
 import { formatCLP } from "@/lib/products";
 import { useProduct } from "@/hooks/useProducts";
@@ -14,24 +14,15 @@ import PageMeta from "@/components/PageMeta";
 
 const BASE_URL = "https://vitrax.cl";
 
-function getDeliveryDate() {
-  const d = new Date();
-  let businessDays = 0;
-  while (businessDays < 3) {
-    d.setDate(d.getDate() + 1);
-    const dow = d.getDay();
-    if (dow !== 0 && dow !== 6) businessDays++;
-  }
-  const weekday = d.toLocaleDateString("es-CL", { weekday: "long" });
-  const day = d.getDate();
-  const month = d.toLocaleDateString("es-CL", { month: "long" });
-  return `${weekday}, ${day} de ${month}`;
-}
 
 export default function ProductDetail() {
   const { productId } = useParams();
   const { data: product, isLoading } = useProduct(productId);
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   if (isLoading) {
     return (
@@ -211,9 +202,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-2.5 mt-4 text-sm bg-muted/40 border border-border/50 rounded-xl px-4 py-3">
             <Truck size={16} className="text-primary shrink-0" />
             <span className="text-muted-foreground">
-              Llega el{" "}
-              <strong className="text-foreground font-semibold">{getDeliveryDate()}</strong>
-              {" "}· Despacho a todo Chile
+              Despacho a todo Chile · Envío calculado en el checkout · Entrega en 1-5 días hábiles
             </span>
           </div>
 

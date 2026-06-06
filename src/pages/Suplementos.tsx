@@ -20,13 +20,18 @@ export default function Suplementos() {
   const [filter, setFilter] = useState<Filter>("todos");
   const { data: products, isLoading, error } = useProductsBySection("Suplementos");
 
-  const filtered = filter === "todos" ? products : products.filter((p) => p.category === filter);
+  const base = filter === "todos" ? products : products.filter((p) => p.category === filter);
+  const filtered = [...base].sort((a, b) => {
+    if (a.stock > 0 && b.stock === 0) return -1;
+    if (a.stock === 0 && b.stock > 0) return 1;
+    return 0;
+  });
 
   return (
     <div>
       <PageMeta
         title="Suplementos Premium en Chile — Proteínas, Creatinas y Vitaminas"
-        description="Proteínas, creatinas, vitaminas y energéticos de importación directa. Dymatize, OstroVit y más. Stock en Chile, despacho 24-72h a todo el país."
+        description="Proteínas, creatinas, vitaminas y energéticos de importación directa. Dymatize, OstroVit, MuscleTech, Finaflex y más. Stock en Chile, despacho a todo el país."
         canonical="https://vitrax.cl/suplementos"
       />
 
@@ -44,7 +49,7 @@ export default function Suplementos() {
               Suplementos premium
             </h1>
             <p className="text-muted-foreground mt-3 text-lg max-w-xl leading-relaxed">
-              Importación directa de Dymatize y OstroVit. Stock permanente en Chile, despacho 24–72 h.
+              Importación directa de Dymatize, OstroVit y MuscleTech. Stock permanente en Chile.
             </p>
           </motion.div>
         </div>
