@@ -1,5 +1,7 @@
 export const config = { runtime: "edge" };
 
+import { Resend } from "resend";
+
 const SHIPIT_RATES_URL = "https://api.shipit.cl/v/rates";
 const SHIPIT_SHIPMENTS_URL = "https://api.shipit.cl/v/1.1/shipments";
 const SHIPIT_ORIGIN_ID = 326; // Vitacura
@@ -217,6 +219,14 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── 8. Persist shipit_id and tracking_url on the order ──────────────────
+  void sendShippingEmail({
+    orderId: order.id,
+    customerName: order.customer_name,
+    customerEmail: order.customer_email,
+    trackingUrl,
+    courierName,
+  }).catch((err) => console.error("[create-shipment] Shipping email failed (non-fatal):", err));
+
   const patchRes = await fetch(
     `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}`,
     {
@@ -237,6 +247,76 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   return json({ success: true, shipit_id: shipitId, tracking_url: trackingUrl });
+}
+
+async function sendShippingEmail({
+  orderId,
+  customerName,
+  customerEmail,
+  trackingUrl,
+  courierName,
+}: {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  trackingUrl: string;
+  courierName: string;
+}): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+
+  const from = process.env.RESEND_FROM_EMAIL ?? "Level Up <onboarding@resend.dev>";
+  const shortId = orderId.slice(0, 8).toUpperCase();
+  const safeName = customerName
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tu pedido está en camino</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="max-width:560px;margin:32px auto 48px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+
+    <div style="background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%);padding:36px 40px;text-align:center;">
+      <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;letter-spacing:-.3px;">Level Up</h1>
+      <p style="margin:6px 0 0;color:rgba(255,255,255,.8);font-size:13px;">Suplementos · Wellness · Wearables · Chile 🇨🇱</p>
+    </div>
+
+    <div style="padding:40px;">
+      <h2 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111;">¡Tu pedido está en camino! 🚚</h2>
+      <p style="margin:0 0 28px;font-size:15px;color:#555;">Hola <strong>${safeName}</strong>, tu pedido <strong>#${shortId}</strong> ha sido despachado y está en camino.</p>
+
+      <div style="text-align:center;margin-bottom:28px;">
+        <a href="${trackingUrl}"
+           style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:600;font-size:15px;">
+          Rastrear mi envío →
+        </a>
+      </div>
+
+      <div style="background:#f9fafb;border-radius:10px;padding:14px 20px;text-align:center;">
+        <p style="margin:0;font-size:13px;color:#6b7280;">Despachado por <strong style="color:#111;">${courierName}</strong></p>
+      </div>
+    </div>
+
+    <div style="background:#f9fafb;border-top:1px solid #f0f0f0;padding:20px 40px;text-align:center;">
+      <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Level Up · Despacho a todo Chile</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const resend = new Resend(apiKey);
+  await resend.emails.send({
+    from,
+    to: customerEmail,
+    subject: "Tu pedido está en camino 🚚",
+    html,
+  });
 }
 
 function json(data: unknown, status = 200): Response {

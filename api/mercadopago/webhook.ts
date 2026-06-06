@@ -132,7 +132,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Fetch order + items for email (non-critical — never fail the webhook on email error)
   try {
     const orderRes = await fetch(
-      `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=customer_name,customer_email,customer_phone,customer_address,total,payment_method,order_items(product_name,qty,price)`,
+      `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=customer_name,customer_email,customer_phone,customer_address,total,payment_method,tracking_url,order_items(product_name,qty,price)`,
       { headers: authHeaders }
     );
     if (orderRes.ok) {
@@ -143,6 +143,7 @@ export default async function handler(req: Request): Promise<Response> {
         customer_address: string;
         total: number;
         payment_method: string;
+        tracking_url: string | null;
         order_items: Array<{ product_name: string; qty: number; price: number }>;
       }>;
       const row = rows[0];
@@ -158,6 +159,7 @@ export default async function handler(req: Request): Promise<Response> {
           items: row.order_items,
           total: row.total,
           paymentMethod: row.payment_method as "mercadopago" | "transferencia",
+          ...(row.tracking_url ? { trackingUrl: row.tracking_url } : {}),
         });
       }
     }

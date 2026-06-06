@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
-import { getCartTotal, formatCLP, getShippingQuote } from "@/lib/cart";
+import { getCartTotal, formatCLP, getShippingQuote, type ShipitQuote } from "@/lib/cart";
 import { filterCommunes, type ShipitCommune } from "@/lib/shipit-communes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,12 +23,12 @@ export default function Checkout() {
   const [communeOpen, setCommuneOpen] = useState(false);
   const communeRef = useRef<HTMLDivElement>(null);
 
-  // Shipping quote
-  const [shippingCost, setShippingCost] = useState<number | null>(null);
-  const [courierName, setCourierName] = useState<string | null>(null);
+  // Shipping quotes
+  const [quotes, setQuotes] = useState<ShipitQuote[]>([]);
+  const [selectedQuote, setSelectedQuote] = useState<ShipitQuote | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
 
-  // Close dropdown on outside click
+  // Close commune dropdown on outside click
   useEffect(() => {
     function onMouseDown(e: MouseEvent) {
       if (communeRef.current && !communeRef.current.contains(e.target as Node)) {
@@ -39,32 +39,30 @@ export default function Checkout() {
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  // Fetch shipping quote when commune changes
+  // Fetch shipping quotes when commune changes
   const communeId = commune?.id ?? null;
   useEffect(() => {
     if (communeId === null) {
-      setShippingCost(null);
-      setCourierName(null);
+      setQuotes([]);
+      setSelectedQuote(null);
       return;
     }
     let cancelled = false;
     setShippingLoading(true);
-    setShippingCost(null);
-    setCourierName(null);
+    setQuotes([]);
+    setSelectedQuote(null);
     const items = cart.map((i) => ({ id: i.id, quantity: i.qty }));
     void getShippingQuote(communeId, items).then((result) => {
       if (cancelled) return;
-      setShippingCost(result.shippingCost);
-      setCourierName(result.courierName);
+      setQuotes(result.quotes);
+      setSelectedQuote(result.quotes[0] ?? null); // pre-select cheapest
       setShippingLoading(false);
     });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [communeId]);
 
-  const orderTotal = subtotal + (shippingCost ?? 0);
+  const orderTotal = subtotal + (selectedQuote?.price ?? 0);
   const filteredCommunes = filterCommunes(communeSearch);
 
   function handleCommuneInput(value: string) {
@@ -72,8 +70,8 @@ export default function Checkout() {
     setCommuneOpen(true);
     if (commune) {
       setCommune(null);
-      setShippingCost(null);
-      setCourierName(null);
+      setQuotes([]);
+      setSelectedQuote(null);
     }
   }
 
@@ -114,8 +112,8 @@ export default function Checkout() {
         },
         cart,
         total: orderTotal,
-        shippingCost: shippingCost ?? 0,
-        courierName,
+        shippingCost: selectedQuote!.price,
+        courierName: selectedQuote!.courierName,
       },
     });
   }
@@ -214,12 +212,12 @@ export default function Checkout() {
           {/* Comuna */}
           <div className="space-y-2">
             <Label htmlFor="commune" className="flex items-center gap-2">
-              <Truck size={14} /> Comuna de despacho
+              <Truck size={14} /> Comuna de despacho *
             </Label>
             <div className="relative" ref={communeRef}>
               <Input
                 id="commune"
-                placeholder="Ej: Providencia, Las Condes…"
+                placeholder="Busca tu comuna..."
                 value={communeSearch}
                 onChange={(e) => handleCommuneInput(e.target.value)}
                 onFocus={() => { if (communeSearch.length > 0 && !commune) setCommuneOpen(true); }}
@@ -233,7 +231,7 @@ export default function Checkout() {
                       <button
                         type="button"
                         onMouseDown={(e) => {
-                          e.preventDefault(); // keep dropdown open until click completes
+                          e.preventDefault();
                           handleCommuneSelect(c);
                         }}
                         className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors"
@@ -245,8 +243,61 @@ export default function Checkout() {
                 </ul>
               )}
             </div>
+            {commune && (
+              <p className="text-xs text-green-600 font-medium">
+                ✓ {commune.name} · {commune.region}
+              </p>
+            )}
             {errors.commune && <p className="text-xs text-destructive">{errors.commune}</p>}
           </div>
+
+          {/* Courier selector */}
+          {commune && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Servicio de envío</Label>
+              {shippingLoading ? (
+                <p className="text-sm text-muted-foreground py-1">Calculando opciones de envío…</p>
+              ) : quotes.length === 0 ? (
+                <p className="text-sm text-destructive py-1">Sin couriers disponibles para esta comuna.</p>
+              ) : (
+                <div className="space-y-2">
+                  {quotes.map((q, i) => {
+                    const label = q.courierName
+                      ? q.courierName.charAt(0).toUpperCase() + q.courierName.slice(1)
+                      : "Envío estándar";
+                    const isSelected = selectedQuote?.courierName === q.courierName;
+                    return (
+                      <label
+                        key={i}
+                        className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2.5 cursor-pointer transition-colors ${
+                          isSelected ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <input
+                            type="radio"
+                            name="courier"
+                            checked={isSelected}
+                            onChange={() => setSelectedQuote(q)}
+                            className="accent-primary shrink-0"
+                          />
+                          <span className="text-sm font-medium">{label}</span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-sm font-semibold">{formatCLP(q.price)}</span>
+                          {q.deliveryDate && (
+                            <span className="text-xs text-muted-foreground ml-2">
+                              · Llega {q.deliveryDate}
+                            </span>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Resumen */}
           <div className="bg-muted/50 rounded-xl p-4 mt-6 space-y-2">
@@ -270,39 +321,31 @@ export default function Checkout() {
             ) : shippingLoading ? (
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Envío</span>
-                <span>Calculando envío…</span>
+                <span>Calculando…</span>
               </div>
-            ) : shippingCost === 0 ? (
+            ) : selectedQuote && selectedQuote.price === 0 ? (
               <div className="flex justify-between text-sm text-green-600 font-semibold">
                 <span>Envío</span>
                 <span>Envío gratis 🎉</span>
               </div>
-            ) : (
+            ) : selectedQuote ? (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Envío</span>
-                <span>
-                  {formatCLP(shippingCost ?? 0)}
-                  {courierName && (
-                    <span className="text-muted-foreground ml-1">· {courierName}</span>
-                  )}
-                </span>
+                <span className="font-medium">{formatCLP(selectedQuote.price)}</span>
               </div>
-            )}
+            ) : null}
 
             <div className="border-t pt-2 flex justify-between font-bold">
               <span>Total</span>
               <span className="text-primary">
-                {shippingCost !== null ? formatCLP(orderTotal) : formatCLP(subtotal)}
+                {selectedQuote !== null ? formatCLP(orderTotal) : formatCLP(subtotal)}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground pt-1">
-              🕐 Tiempo de entrega: 3–5 días hábiles
-            </p>
           </div>
 
           <Button
             type="submit"
-            disabled={!commune || shippingCost === null || shippingLoading}
+            disabled={!commune || !selectedQuote || shippingLoading}
             className="w-full brand-gradient-bg text-primary-foreground rounded-full h-14 text-lg font-semibold gap-2 mt-4 disabled:opacity-50"
           >
             Continuar al pago

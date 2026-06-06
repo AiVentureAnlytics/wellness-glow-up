@@ -64,21 +64,30 @@ export function getCartTotal(cart: CartItem[]) {
 
 export const SHIPPING_THRESHOLD = 40000;
 
+export interface ShipitQuote {
+  courierName: string | null;
+  price: number;
+  deliveryDate: string | null;
+  days: number | null;
+}
+
+const FALLBACK_QUOTE: ShipitQuote = { courierName: null, price: 3000, deliveryDate: null, days: null };
+
 export async function getShippingQuote(
   communeId: number,
   items: { id: string; quantity: number }[]
-): Promise<{ shippingCost: number; courierName: string | null }> {
+): Promise<{ quotes: ShipitQuote[] }> {
   try {
     const res = await fetch("/api/shipit/quote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ commune_id: communeId, items }),
     });
-    if (!res.ok) return { shippingCost: 3000, courierName: null };
-    const data = await res.json() as { shippingCost: number; courierName: string | null };
-    return { shippingCost: data.shippingCost, courierName: data.courierName };
+    if (!res.ok) return { quotes: [FALLBACK_QUOTE] };
+    const data = (await res.json()) as { quotes: ShipitQuote[] };
+    return { quotes: data.quotes?.length ? data.quotes : [FALLBACK_QUOTE] };
   } catch {
-    return { shippingCost: 3000, courierName: null };
+    return { quotes: [FALLBACK_QUOTE] };
   }
 }
 

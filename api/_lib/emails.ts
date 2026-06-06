@@ -9,6 +9,8 @@ export interface OrderEmailData {
   items: Array<{ product_name: string; qty: number; price: number }>;
   total: number;
   paymentMethod: "mercadopago" | "transferencia";
+  trackingUrl?: string;
+  deliveryDays?: string;
 }
 
 function escapeHtml(s: string): string {
@@ -41,7 +43,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
   const from =
     process.env.RESEND_FROM_EMAIL ?? "Level Up <onboarding@resend.dev>";
 
-  const { orderId, customer, items, total, paymentMethod } = data;
+  const { orderId, customer, items, total, paymentMethod, trackingUrl, deliveryDays } = data;
   const shortId = orderId.slice(0, 8).toUpperCase();
   const orderUrl = `${APP_URL}/orden/${orderId}`;
   const paymentLabel =
@@ -120,7 +122,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
         </tr>
         <tr>
           <td style="padding:12px 18px;font-size:13px;color:#6b7280;white-space:nowrap;">Entrega estimada</td>
-          <td style="padding:12px 18px;font-size:13px;font-weight:600;color:#111;">3–5 días hábiles</td>
+          <td style="padding:12px 18px;font-size:13px;font-weight:600;color:#111;">${deliveryDays ?? "3–5 días hábiles"}</td>
         </tr>
       </table>
 
@@ -131,6 +133,15 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
           Ver mi orden →
         </a>
       </div>
+
+      ${trackingUrl ? `
+      <div style="background:#f5f3ff;border-radius:10px;padding:16px 20px;text-align:center;margin-bottom:28px;">
+        <p style="margin:0 0 8px;font-size:13px;color:#6b7280;">Tu envío está en camino</p>
+        <a href="${trackingUrl}"
+           style="display:inline-block;background:#7c3aed;color:#fff;font-size:14px;font-weight:600;padding:10px 24px;border-radius:8px;text-decoration:none;">
+          Rastrear mi envío →
+        </a>
+      </div>` : ""}
 
       <p style="margin:0;font-size:13px;color:#9ca3af;text-align:center;">
         ¿Preguntas? Escríbenos a

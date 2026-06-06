@@ -2,18 +2,15 @@ export const config = { runtime: "edge" };
 
 const SHIPIT_RATES_URL = "https://api.shipit.cl/v/rates";
 const SHIPIT_ORIGIN_ID = 326; // Vitacura
-const FALLBACK: QuoteResult = { shippingCost: 3000, courierId: null, courierName: null };
-const DEFAULT_WEIGHT_KG = 0.5; // fallback per item when weight_kg is null in DB
+const DEFAULT_WEIGHT_KG = 0.5;
+
+const FALLBACK_QUOTES = {
+  quotes: [{ courierName: null, price: 3000, deliveryDate: null, days: null }],
+};
 
 interface RequestBody {
   commune_id: number;
   items: Array<{ id: string; quantity: number }>;
-}
-
-interface QuoteResult {
-  shippingCost: number;
-  courierId: number | null;
-  courierName: string | null;
 }
 
 interface DbProduct {
@@ -25,6 +22,8 @@ interface ShipitPrice {
   price: number;
   available_to_shipping: boolean;
   courier: { name: string };
+  name: string;   // human-readable delivery date, e.g. "Martes, 09 De Junio"
+  days: number;
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -90,7 +89,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Call Shipit rates API; fall back gracefully on any failure
   const shipitEmail = process.env.SHIPIT_EMAIL;
   const shipitToken = process.env.SHIPIT_TOKEN;
-  if (!shipitEmail || !shipitToken) return json(FALLBACK);
+  if (!shipitEmail || !shipitToken) return json(FALLBACK_QUOTES);
 
   let shipitData: unknown;
   try {
@@ -115,34 +114,32 @@ export default async function handler(req: Request): Promise<Response> {
       }),
     });
 
-    if (!shipitRes.ok) return json(FALLBACK);
+    if (!shipitRes.ok) return json(FALLBACK_QUOTES);
     shipitData = await shipitRes.json();
   } catch {
-    return json(FALLBACK);
+    return json(FALLBACK_QUOTES);
   }
 
-  const result = pickCheapest(shipitData);
-  return json(result ?? FALLBACK);
+  const quotes = extractQuotes(shipitData);
+  return json(quotes.length > 0 ? { quotes } : FALLBACK_QUOTES);
 }
 
-function pickCheapest(data: unknown): QuoteResult | null {
+function extractQuotes(data: unknown) {
   const prices: ShipitPrice[] = Array.isArray(data)
     ? (data as ShipitPrice[])
     : Array.isArray((data as Record<string, unknown>)?.prices)
       ? ((data as Record<string, unknown>).prices as ShipitPrice[])
       : [];
 
-  const available = prices.filter((p) => p.available_to_shipping === true);
-  if (available.length === 0) return null;
-
-  available.sort((a, b) => a.price - b.price);
-
-  const cheapest = available[0];
-  return {
-    shippingCost: cheapest.price,
-    courierId: null,
-    courierName: cheapest.courier?.name ?? null,
-  };
+  return prices
+    .filter((p) => p.available_to_shipping === true)
+    .sort((a, b) => a.price - b.price)
+    .map((p) => ({
+      courierName: p.courier?.name ?? null,
+      price: p.price,
+      deliveryDate: p.name ?? null,
+      days: p.days ?? null,
+    }));
 }
 
 function json(data: unknown, status = 200): Response {
