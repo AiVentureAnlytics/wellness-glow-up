@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { getCartTotal, formatCLP, getShippingQuote, type ShipitQuote } from "@/lib/cart";
-import { filterCommunes, type ShipitCommune } from "@/lib/shipit-communes";
+import { filterCommunes, getRegionLabel, type ShipitCommune } from "@/lib/shipit-communes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,10 @@ export default function Checkout() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Communes list (fetched on mount)
+  const [communes, setCommunes] = useState<ShipitCommune[]>([]);
+  const [communesLoading, setCommunesLoading] = useState(true);
+
   // Commune combobox
   const [communeSearch, setCommuneSearch] = useState("");
   const [commune, setCommune] = useState<ShipitCommune | null>(null);
@@ -27,6 +31,17 @@ export default function Checkout() {
   const [quotes, setQuotes] = useState<ShipitQuote[]>([]);
   const [selectedQuote, setSelectedQuote] = useState<ShipitQuote | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
+
+  // Fetch full communes list once on mount
+  useEffect(() => {
+    fetch("/api/shipit/communes")
+      .then((r) => r.json())
+      .then((data: unknown) => {
+        setCommunes(Array.isArray(data) ? (data as ShipitCommune[]) : []);
+      })
+      .catch(() => {})
+      .finally(() => setCommunesLoading(false));
+  }, []);
 
   // Close commune dropdown on outside click
   useEffect(() => {
@@ -63,7 +78,7 @@ export default function Checkout() {
   }, [communeId]);
 
   const orderTotal = subtotal + (selectedQuote?.price ?? 0);
-  const filteredCommunes = filterCommunes(communeSearch);
+  const filteredCommunes = filterCommunes(communes, communeSearch);
 
   function handleCommuneInput(value: string) {
     setCommuneSearch(value);
@@ -217,7 +232,8 @@ export default function Checkout() {
             <div className="relative" ref={communeRef}>
               <Input
                 id="commune"
-                placeholder="Busca tu comuna..."
+                placeholder={communesLoading ? "Cargando comunas..." : "Busca tu comuna..."}
+                disabled={communesLoading}
                 value={communeSearch}
                 onChange={(e) => handleCommuneInput(e.target.value)}
                 onFocus={() => { if (communeSearch.length > 0 && !commune) setCommuneOpen(true); }}
@@ -245,7 +261,7 @@ export default function Checkout() {
             </div>
             {commune && (
               <p className="text-xs text-green-600 font-medium">
-                ✓ {commune.name} · {commune.region}
+                ✓ {commune.name}{getRegionLabel(commune.id) ? ` · ${getRegionLabel(commune.id)}` : ""}
               </p>
             )}
             {errors.commune && <p className="text-xs text-destructive">{errors.commune}</p>}
