@@ -38,10 +38,8 @@ interface ShipitRatesResponse {
 }
 
 interface ShipitShipmentResponse {
-  shipment?: {
-    id: number;
-    tracking_url?: string;
-  };
+  id?: number;
+  shipit_tracking_link?: string;
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -210,12 +208,12 @@ export default async function handler(req: Request): Promise<Response> {
 
     const shipmentData = (await shipmentRes.json()) as ShipitShipmentResponse;
     console.log("[create-shipment] Shipit response:", JSON.stringify(shipmentData));
-    if (!shipmentData.shipment?.id) {
+    if (!shipmentData.id) {
       return fail("Shipit response missing shipment.id", 502);
     }
 
-    shipitId = shipmentData.shipment.id;
-    trackingUrl = shipmentData.shipment.tracking_url ?? "";
+    shipitId = shipmentData.id;
+    trackingUrl = shipmentData.shipit_tracking_link ?? "";
   } catch (err) {
     return fail(`Shipit shipment error: ${String(err)}`, 502);
   }
