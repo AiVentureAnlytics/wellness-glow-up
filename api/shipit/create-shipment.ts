@@ -19,7 +19,7 @@ interface Order {
 
 interface OrderItem {
   product_id: string;
-  quantity: number;
+  qty: number;
 }
 
 interface DbProduct {
@@ -91,7 +91,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── 3. Fetch order items ─────────────────────────────────────────────────
   const itemsRes = await fetch(
-    `${supabaseUrl}/rest/v1/order_items?order_id=eq.${orderId}&select=product_id,quantity`,
+    `${supabaseUrl}/rest/v1/order_items?order_id=eq.${orderId}&select=product_id,qty`,
     { headers: authHeaders }
   );
   if (!itemsRes.ok) return fail("Failed to fetch order items", 502);
@@ -116,8 +116,8 @@ export default async function handler(req: Request): Promise<Response> {
   let totalWeight = 0;
   let totalItems = 0;
   for (const item of orderItems) {
-    totalWeight += item.quantity * (weightMap.get(item.product_id) ?? DEFAULT_WEIGHT_KG);
-    totalItems += item.quantity;
+    totalWeight += item.qty * (weightMap.get(item.product_id) ?? DEFAULT_WEIGHT_KG);
+    totalItems += item.qty;
   }
 
   // ── 6. Get cheapest courier via Shipit rates ─────────────────────────────
