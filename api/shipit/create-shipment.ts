@@ -1,6 +1,6 @@
-export const config = { runtime: "edge" };
-
 import { Resend } from "resend";
+
+export const config = { runtime: "edge" };
 
 const SHIPIT_RATES_URL = "https://api.shipit.cl/v/rates";
 const SHIPIT_SHIPMENTS_URL = "https://api.shipit.cl/v/1.1/shipments";
