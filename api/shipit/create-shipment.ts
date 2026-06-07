@@ -209,6 +209,7 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     const shipmentData = (await shipmentRes.json()) as ShipitShipmentResponse;
+    console.log("[create-shipment] Shipit response:", JSON.stringify(shipmentData));
     if (!shipmentData.shipment?.id) {
       return fail("Shipit response missing shipment.id", 502);
     }
