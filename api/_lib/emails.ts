@@ -137,7 +137,7 @@ export async function sendOrderEmails(data: OrderEmailData): Promise<void> {
       ${trackingUrl ? `
       <div style="background:#f5f3ff;border-radius:10px;padding:16px 20px;text-align:center;margin-bottom:28px;">
         <p style="margin:0 0 8px;font-size:13px;color:#6b7280;">Tu envío está en camino</p>
-        <a href="${trackingUrl}"
+        <a href="${escapeHtml(trackingUrl)}"
            style="display:inline-block;background:#7c3aed;color:#fff;font-size:14px;font-weight:600;padding:10px 24px;border-radius:8px;text-decoration:none;">
           Rastrear mi envío →
         </a>

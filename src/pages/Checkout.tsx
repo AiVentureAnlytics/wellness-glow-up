@@ -108,6 +108,7 @@ export default function Checkout() {
     if (!form.phone.trim()) e.phone = "Ingresa tu teléfono";
     if (!form.address.trim()) e.address = "Ingresa tu dirección de despacho";
     if (!commune) e.commune = "Selecciona tu comuna de despacho";
+    if (!selectedQuote) e.commune = "Selecciona un servicio de envío";
     return e;
   }
 

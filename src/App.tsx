@@ -30,7 +30,7 @@ const App = () => (
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-1">
-            <Suspense>
+            <Suspense fallback={<div className="container py-20 text-center text-muted-foreground">Cargando…</div>}>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/wearables" element={<Wearables />} />

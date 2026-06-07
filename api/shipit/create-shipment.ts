@@ -271,6 +271,8 @@ async function sendShippingEmail({
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
+  const safeTrackingUrl = (trackingUrl ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
   const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -291,7 +293,7 @@ async function sendShippingEmail({
       <p style="margin:0 0 28px;font-size:15px;color:#555;">Hola <strong>${safeName}</strong>, tu pedido <strong>#${shortId}</strong> ha sido despachado y está en camino.</p>
 
       <div style="text-align:center;margin-bottom:28px;">
-        <a href="${trackingUrl}"
+        <a href="${safeTrackingUrl}"
            style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;text-decoration:none;padding:14px 36px;border-radius:50px;font-weight:600;font-size:15px;">
           Rastrear mi envío →
         </a>
