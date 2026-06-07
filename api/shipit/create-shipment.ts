@@ -83,7 +83,7 @@ export default async function handler(req: Request): Promise<Response> {
     `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=id,customer_name,customer_email,customer_phone,customer_address,shipping_commune_id,shipping_commune_name`,
     { headers: authHeaders }
   );
-  if (!orderRes.ok) return fail("Failed to fetch order", 502);
+  if (!orderRes.ok) return fail(`Failed to fetch order [${orderRes.status}]`, 502);
 
   const orderRows = (await orderRes.json()) as Order[];
   if (!orderRows[0]) return fail("Order not found", 404);
@@ -94,7 +94,7 @@ export default async function handler(req: Request): Promise<Response> {
     `${supabaseUrl}/rest/v1/order_items?order_id=eq.${orderId}&select=product_id,qty`,
     { headers: authHeaders }
   );
-  if (!itemsRes.ok) return fail("Failed to fetch order items", 502);
+  if (!itemsRes.ok) return fail(`Failed to fetch order items [${itemsRes.status}]`, 502);
 
   const orderItems = (await itemsRes.json()) as OrderItem[];
   if (!orderItems.length) return fail("Order has no items", 400);
@@ -203,7 +203,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     if (!shipmentRes.ok) {
       const errText = await shipmentRes.text();
-      return fail(`Shipit shipment creation failed: ${errText}`, 502);
+      return fail(`Shipit shipment creation failed [${shipmentRes.status}]: ${errText}`, 502);
     }
 
     const shipmentData = (await shipmentRes.json()) as ShipitShipmentResponse;
