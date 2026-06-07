@@ -36,7 +36,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // "envio" is a virtual shipping item — not in products table
   const productItems = clientItems.filter((i) => i.id !== "envio");
-  const hasShipping = clientItems.some((i) => i.id === "envio");
+  const orderId = body.external_reference as string | undefined;
 
   // Validate product IDs are safe slugs (word chars + hyphens only)
   for (const item of productItems) {
@@ -79,22 +79,19 @@ export default async function handler(req: Request): Promise<Response> {
     });
   }
 
-  if (hasShipping) {
-    const shippingPrice = Math.max(0, Math.floor(Number(clientItems.find((i) => i.id === "envio")?.unit_price ?? 0)));
-    if (shippingPrice > 0) {
-      items.push({
-        id: "envio",
-        title: "Envío",
-        quantity: 1,
-        unit_price: shippingPrice,
-        currency_id: "CLP",
-      });
-    }
+  const orderShipRes = await fetch(
+    `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=shipping_cost`,
+    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+  );
+  const [orderShipRow] = (await orderShipRes.json()) as Array<{ shipping_cost: number }>;
+  const serverShipping = orderShipRow?.shipping_cost ?? 0;
+
+  if (serverShipping > 0) {
+    items.push({ id: "envio", title: "Envío", quantity: 1, unit_price: serverShipping, currency_id: "CLP" });
   }
 
   // Recalculate total server-side and patch the order so DB matches what MP will charge
   const serverTotal = items.reduce((sum, i) => sum + i.unit_price * i.quantity, 0);
-  const orderId = body.external_reference as string | undefined;
   if (orderId && /^[0-9a-f-]{36}$/i.test(orderId)) {
     await fetch(`${supabaseUrl}/rest/v1/orders?id=eq.${orderId}`, {
       method: "PATCH",

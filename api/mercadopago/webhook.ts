@@ -18,9 +18,13 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: "Invalid JSON body" }, 400);
   }
 
-  // HMAC signature verification (optional — only when MP_WEBHOOK_SECRET is set)
+  // HMAC signature verification (mandatory)
   const secret = process.env.MP_WEBHOOK_SECRET;
-  if (secret) {
+  if (!secret) {
+    console.error("[webhook] MP_WEBHOOK_SECRET not configured");
+    return json({ error: "Webhook not configured" }, 503);
+  }
+  if (true) {
     const signature = req.headers.get("x-signature") ?? "";
     const requestId = req.headers.get("x-request-id") ?? "";
     const dataId = (body.data as { id?: string } | undefined)?.id ?? "";

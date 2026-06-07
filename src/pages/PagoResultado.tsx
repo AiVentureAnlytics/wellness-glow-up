@@ -42,7 +42,7 @@ const ORDER_STATUS: Record<Status, string> = {
 export default function PagoResultado({ status }: { status: Status }) {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
-  const orderId = params.get("order") ?? sessionStorage.getItem("pending_order_id");
+  const orderId = params.get("external_reference") ?? params.get("order") ?? sessionStorage.getItem("pending_order_id");
   useEffect(() => {
     async function updateStatus() {
       if (!orderId) return;
@@ -50,7 +50,8 @@ export default function PagoResultado({ status }: { status: Status }) {
       await supabase
         .from("orders")
         .update({ status: ORDER_STATUS[status] })
-        .eq("id", orderId);
+        .eq("id", orderId)
+        .eq("status", "pendiente_pago");
 
       if (status === "exito") {
         clearCart();

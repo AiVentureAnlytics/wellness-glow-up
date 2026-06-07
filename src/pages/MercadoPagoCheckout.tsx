@@ -66,6 +66,7 @@ export default function MercadoPagoCheckout() {
           shipping_commune_id: customer.commune_id,
           shipping_commune_name: customer.commune_name,
           payment_method: "mercadopago",
+          shipping_cost: shippingCost ?? 0,
         });
 
       if (orderError) throw new Error(orderError.message);

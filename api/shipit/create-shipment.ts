@@ -7,18 +7,12 @@ const SHIPIT_SHIPMENTS_URL = "https://api.shipit.cl/v/1.1/shipments";
 const SHIPIT_ORIGIN_ID = 326; // Vitacura
 const DEFAULT_WEIGHT_KG = 0.5;
 
-interface ShippingAddress {
-  street: string;
-  number: string;
-  complement?: string;
-}
-
 interface Order {
   id: string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
-  shipping_address: ShippingAddress;
+  customer_address: string;
   shipping_commune_id: number;
   shipping_commune_name: string;
 }
@@ -86,7 +80,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   // ── 2. Fetch order ───────────────────────────────────────────────────────
   const orderRes = await fetch(
-    `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=id,customer_name,customer_email,customer_phone,shipping_address,shipping_commune_id,shipping_commune_name`,
+    `${supabaseUrl}/rest/v1/orders?id=eq.${orderId}&select=id,customer_name,customer_email,customer_phone,customer_address,shipping_commune_id,shipping_commune_name`,
     { headers: authHeaders }
   );
   if (!orderRes.ok) return fail("Failed to fetch order", 502);
@@ -163,6 +157,11 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // ── 7. Create shipment ───────────────────────────────────────────────────
+  const parts = (order.customer_address ?? "").split(",").map((s) => s.trim());
+  const street = parts[0] ?? order.customer_address ?? "";
+  const number = parts[1] ?? "S/N";
+  const complement = parts.slice(2).join(", ");
+
   let shipitId: number;
   let trackingUrl: string;
   try {
@@ -188,9 +187,9 @@ export default async function handler(req: Request): Promise<Response> {
             client: courierName,
           },
           destiny: {
-            street: order.shipping_address.street,
-            number: order.shipping_address.number,
-            complement: order.shipping_address.complement ?? "",
+            street,
+            number,
+            complement,
             commune_id: order.shipping_commune_id,
             commune_name: order.shipping_commune_name,
             full_name: order.customer_name,
