@@ -3,7 +3,7 @@ import { Resend } from "resend";
 export const config = { runtime: "edge" };
 
 const SHIPIT_RATES_URL = "https://api.shipit.cl/v/rates";
-const SHIPIT_SHIPMENTS_URL = "https://api.shipit.cl/v/1.1/shipments";
+const SHIPIT_SHIPMENTS_URL = "https://api.shipit.cl/v/shipments";
 const SHIPIT_ORIGIN_ID = 326; // Vitacura
 const DEFAULT_WEIGHT_KG = 0.5;
 
@@ -175,6 +175,8 @@ export default async function handler(req: Request): Promise<Response> {
       },
       body: JSON.stringify({
         shipment: {
+          kind: 0,
+          platform: 2,
           reference: orderId,
           items: totalItems,
           sizes: {
