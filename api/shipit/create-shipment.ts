@@ -177,7 +177,7 @@ export default async function handler(req: Request): Promise<Response> {
         shipment: {
           kind: 0,
           platform: 2,
-          reference: orderId,
+          reference: orderId.replace(/-/g, "").substring(0, 15),
           items: totalItems,
           sizes: {
             width: 30,
