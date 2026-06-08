@@ -10,6 +10,7 @@ export type Category =
   | "vitaminas"
   | "energia"
   | "wellness"
+  | "promos"
   | "wearables";
 
 export type Section = "Suplementos" | "Wellness" | "Wearables";

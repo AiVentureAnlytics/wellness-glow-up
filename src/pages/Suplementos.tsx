@@ -14,6 +14,7 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: "creatinas", label: "Creatinas" },
   { id: "vitaminas", label: "Vitaminas & Minerales" },
   { id: "energia", label: "Energía" },
+  { id: "promos", label: "Promos 🔥" },
 ];
 
 export default function Suplementos() {
