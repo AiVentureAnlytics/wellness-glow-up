@@ -67,7 +67,7 @@ export default function Checkout() {
     setQuotes([]);
     setSelectedQuote(null);
     const items = cart.map((i) => ({ id: i.id, quantity: i.qty }));
-    void getShippingQuote(communeId, items).then((result) => {
+    void getShippingQuote(communeId, items, subtotal).then((result) => {
       if (cancelled) return;
       setQuotes(result.quotes);
       setSelectedQuote(result.quotes[0] ?? null); // pre-select cheapest

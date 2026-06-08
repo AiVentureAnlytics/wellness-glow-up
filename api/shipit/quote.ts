@@ -11,6 +11,7 @@ const FALLBACK_QUOTES = {
 interface RequestBody {
   commune_id: number;
   items: Array<{ id: string; quantity: number }>;
+  subtotal: number;
 }
 
 interface DbProduct {
@@ -57,7 +58,8 @@ export default async function handler(req: Request): Promise<Response> {
       parsedItems.push({ id: item.id, quantity: qty });
     }
 
-    body = { commune_id: communeId, items: parsedItems };
+    const subtotal = typeof raw.subtotal === "number" && raw.subtotal >= 0 ? raw.subtotal : 0;
+    body = { commune_id: communeId, items: parsedItems, subtotal };
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
@@ -120,12 +122,20 @@ export default async function handler(req: Request): Promise<Response> {
     return json(FALLBACK_QUOTES);
   }
 
+  const RM_COMMUNE_IDS = new Set([290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340,341,342,343,344,345]);
   const NEARBY_COMMUNES = new Set([308, 309, 326]); // Las Condes, Lo Barnechea, Vitacura
   const NEARBY_PRICE = 2990;
+  const RM_FREE_THRESHOLD = 35000;
+  const REGION_FREE_THRESHOLD = 50000;
+
+  const { commune_id, subtotal } = body;
+  const isRM = RM_COMMUNE_IDS.has(commune_id);
 
   let quotes = extractQuotes(shipitData);
 
-  if (NEARBY_COMMUNES.has(body.commune_id)) {
+  if (subtotal >= (isRM ? RM_FREE_THRESHOLD : REGION_FREE_THRESHOLD)) {
+    quotes = quotes.map((q) => ({ ...q, price: 0 }));
+  } else if (isRM && NEARBY_COMMUNES.has(commune_id)) {
     quotes = quotes.map((q) => ({ ...q, price: NEARBY_PRICE }));
   }
 

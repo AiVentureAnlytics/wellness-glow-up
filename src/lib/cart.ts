@@ -75,13 +75,14 @@ const FALLBACK_QUOTE: ShipitQuote = { courierName: null, price: 3000, deliveryDa
 
 export async function getShippingQuote(
   communeId: number,
-  items: { id: string; quantity: number }[]
+  items: { id: string; quantity: number }[],
+  subtotal: number
 ): Promise<{ quotes: ShipitQuote[] }> {
   try {
     const res = await fetch("/api/shipit/quote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ commune_id: communeId, items }),
+      body: JSON.stringify({ commune_id: communeId, items, subtotal }),
     });
     if (!res.ok) return { quotes: [FALLBACK_QUOTE] };
     const data = (await res.json()) as { quotes: ShipitQuote[] };
