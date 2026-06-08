@@ -30,7 +30,7 @@ export default function Navbar() {
     <>
       {/* Announcement bar */}
       <div className="brand-gradient-bg text-primary-foreground text-center py-2.5 text-xs font-medium tracking-wide">
-        Despacho a todo Chile &nbsp;·&nbsp; Envío gratis sobre $35.000 en RM &nbsp;·&nbsp; Importadores directos
+        Despacho a todo Chile &nbsp;·&nbsp; Envío gratis sobre $40.000 en RM &nbsp;·&nbsp; Importadores directos
       </div>
 
       <header

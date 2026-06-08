@@ -91,7 +91,7 @@ export default function Footer() {
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Información</p>
             <div className="flex flex-col gap-2.5 text-sm text-muted-foreground">
               <span>Despacho en 24–72 h</span>
-              <span>Envío gratis desde $35.000</span>
+              <span>Envío gratis desde $40.000</span>
               <span>Productos importados directos</span>
               <span>Santiago, Chile</span>
             </div>
