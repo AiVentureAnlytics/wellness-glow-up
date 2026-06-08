@@ -62,7 +62,7 @@ export function getCartTotal(cart: CartItem[]) {
   return cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 }
 
-export const SHIPPING_THRESHOLD = 40000;
+export const SHIPPING_THRESHOLD = 35000;
 
 export interface ShipitQuote {
   courierName: string | null;
