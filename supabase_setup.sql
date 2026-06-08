@@ -251,3 +251,9 @@ $$;
 -- Revocar acceso anónimo y autenticado — solo service_role (webhook) puede ejecutar
 revoke execute on function decrement_order_stocks(uuid) from anon;
 revoke execute on function decrement_order_stocks(uuid) from authenticated;
+
+-- ============================================================
+-- MIGRACIÓN: RUT del comprador
+-- Correr en SQL Editor si la tabla ya existe
+-- ============================================================
+alter table orders add column if not exists customer_rut text;

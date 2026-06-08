@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 export default function OrdenConfirmacion() {
   const { orderId } = useParams();
   const { state } = useLocation() as {
-    state: { customer: { name: string; email: string } } | null;
+    state: { customer: { name: string; email: string; rut?: string } } | null;
   };
 
   const firstName = state?.customer?.name?.split(" ")[0] ?? "Cliente";
   const email = state?.customer?.email ?? "";
+  const rut = state?.customer?.rut ?? "";
 
   return (
     <div className="container py-20 max-w-xl text-center">
@@ -40,6 +41,16 @@ export default function OrdenConfirmacion() {
               <p className="text-sm text-muted-foreground font-mono break-all">{orderId}</p>
             </div>
           </div>
+
+          {rut && (
+            <div className="flex items-start gap-3">
+              <Package size={20} className="text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold">RUT</p>
+                <p className="text-sm text-muted-foreground font-mono">{rut}</p>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start gap-3">
             <Mail size={20} className="text-primary mt-0.5 shrink-0" />

@@ -4,13 +4,14 @@ import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { formatCLP, CartItem } from "@/lib/cart";
 import { createPreference, isMPConfigured, isMPTestMode } from "@/lib/mercadopago";
+import { cleanRut } from "@/lib/rut";
 import { validateCartStock } from "@/lib/checkout";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Loader2, ExternalLink, AlertCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 interface CheckoutState {
-  customer: { name: string; email: string; phone: string; address: string; commune_id?: number; commune_name?: string };
+  customer: { name: string; email: string; phone: string; rut?: string; address: string; commune_id?: number; commune_name?: string };
   cart: CartItem[];
   total: number;
   shippingCost?: number;
@@ -62,6 +63,7 @@ export default function MercadoPagoCheckout() {
           customer_name: customer.name,
           customer_email: customer.email,
           customer_phone: customer.phone,
+          customer_rut: customer.rut ? cleanRut(customer.rut) : null,
           customer_address: customer.address,
           shipping_commune_id: customer.commune_id,
           shipping_commune_name: customer.commune_name,

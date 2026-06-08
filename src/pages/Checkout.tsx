@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag, Truck } from "lucide-react";
+import { User, Mail, Phone, MapPin, ArrowRight, ShoppingBag, Truck, CreditCard } from "lucide-react";
+import { formatRut, isValidRut } from "@/lib/rut";
 
 export default function Checkout() {
   const cart = useCart();
   const subtotal = getCartTotal(cart);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", rut: "", address: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Communes list (fetched on mount)
@@ -106,6 +107,8 @@ export default function Checkout() {
     if (!form.name.trim()) e.name = "Ingresa tu nombre";
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = "Email inválido";
     if (!form.phone.trim()) e.phone = "Ingresa tu teléfono";
+    if (!form.rut.trim()) e.rut = "Ingresa tu RUT";
+    else if (!isValidRut(form.rut)) e.rut = "RUT inválido (ej: 12.345.678-9)";
     if (!form.address.trim()) e.address = "Ingresa tu dirección de despacho";
     if (!commune) e.commune = "Selecciona tu comuna de despacho";
     if (!selectedQuote) e.commune = "Selecciona un servicio de envío";
@@ -208,6 +211,22 @@ export default function Checkout() {
               className={errors.phone ? "border-destructive" : ""}
             />
             {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+          </div>
+
+          {/* RUT */}
+          <div className="space-y-2">
+            <Label htmlFor="rut" className="flex items-center gap-2">
+              <CreditCard size={14} /> RUT
+            </Label>
+            <Input
+              id="rut"
+              placeholder="12.345.678-9"
+              value={form.rut}
+              onChange={(e) => setForm({ ...form, rut: formatRut(e.target.value) })}
+              className={errors.rut ? "border-destructive" : ""}
+              maxLength={12}
+            />
+            {errors.rut && <p className="text-xs text-destructive">{errors.rut}</p>}
           </div>
 
           {/* Dirección */}
