@@ -120,7 +120,15 @@ export default async function handler(req: Request): Promise<Response> {
     return json(FALLBACK_QUOTES);
   }
 
-  const quotes = extractQuotes(shipitData);
+  const NEARBY_COMMUNES = new Set([308, 309, 326]); // Las Condes, Lo Barnechea, Vitacura
+  const NEARBY_PRICE = 2990;
+
+  let quotes = extractQuotes(shipitData);
+
+  if (NEARBY_COMMUNES.has(body.commune_id)) {
+    quotes = quotes.map((q) => ({ ...q, price: NEARBY_PRICE }));
+  }
+
   return json(quotes.length > 0 ? { quotes } : FALLBACK_QUOTES);
 }
 
