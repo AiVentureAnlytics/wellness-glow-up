@@ -47,6 +47,10 @@ export default async function handler(req: Request): Promise<Response> {
     return fail("Method not allowed", 405);
   }
 
+  const internalSecret = process.env.INTERNAL_SHIPMENT_SECRET;
+  if (!internalSecret) return fail("not configured", 500);
+  if (req.headers.get("x-internal-secret") !== internalSecret) return fail("unauthorized", 401);
+
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const shipitEmail = process.env.SHIPIT_EMAIL;

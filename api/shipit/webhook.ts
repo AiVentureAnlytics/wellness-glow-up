@@ -20,6 +20,10 @@ function json(data: unknown, status = 200): Response {
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") return json({ received: true });
 
+  const shipitSecret = process.env.SHIPIT_WEBHOOK_SECRET;
+  if (!shipitSecret) return json({ error: "not configured" }, 500);
+  if (req.headers.get("x-shipit-secret") !== shipitSecret) return json({ error: "unauthorized" }, 401);
+
   let body: { id: number; status: string; reference: string };
   try {
     body = (await req.json()) as { id: number; status: string; reference: string };

@@ -118,7 +118,7 @@ export default async function handler(req: Request): Promise<Response> {
   const shipitUrl = new URL("/api/shipit/create-shipment", req.url).toString();
   fetch(shipitUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "x-internal-secret": process.env.INTERNAL_SHIPMENT_SECRET ?? "" },
     body: JSON.stringify({ order_id: orderId }),
   }).catch(() => {}); // never block webhook response
 
